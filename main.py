@@ -25,11 +25,3 @@ async def show_menu(request: Request):
 
     return templates.TemplateResponse('menu.html', {'request': request})
 
-if __name__ == 'main':
-    uvicorn.run(
-               app,
-               host="0.0.0.0",
-               port=443,
-               ssl_keyfile="/etc/letsencrypt/live/davidwerent.online/fullchain.pem",
-               ssl_certfile="/etc/letsencrypt/live/davidwerent.online/privkey.pem"
-               )
