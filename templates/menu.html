@@ -25,13 +25,7 @@
             display: grid;
             gap: 1rem;
         }
-        item {
-            background-color: dodgerblue;
-            color: white;
-            padding: 1rem;
-            height: 4rem;
 
-        }
 
         @media (min-width: 600px) {
             #main {grid-template-columns: repeat(2, 1fr); }
@@ -43,6 +37,7 @@
             margin-top: 50px;
             margin-bottom: 10px;
         }
+
         img {
             width: 70px;
             margin: 10px auto;
@@ -67,18 +62,49 @@
         button:hover {
             background: var(--tg-theme-secondary-bg-color);
         }
+        .button-container {
+
+            display: flex;
+        }
+        .button-counter {
+            flex: 33.3%;
+            max-width: 100px;
+            height: 200px;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+        }
     </style>
 
 </head>
 <body>
     <h1>Онлайн магазин</h1>
     <div id="main">
-        {% for id, name, price, cost, photo in item_list %}
-        <div id="item">
-            <h2>{{name}}</h2>
-            <img src="{{photo}}">
-            <p>Цена - {{price}}</p>
-            <button id="buy">В корзину</button>
+        {% for id, name, price, cost, photo, desc in item_list %}
+        <div class="item">
+            <div>
+                <h2>{{name}}</h2>
+            </div>
+            <div>
+                <img src="{{photo}}">
+            </div>
+            <div>
+                <p>{{desc}}</p>
+                <p>Цена - {{price}} руб.</p>
+            </div>
+            <div class="button-container">
+                <div class="button-counter">
+                    <button id="remove{{id}}">-</button>
+                </div>
+                <div class="button-counter">
+                    <input type="number" placeholder="0">
+                </div>
+                <div class="button-counter">
+                    <button id="add{{id}}">+</button>
+                </div>
+
+
+            </div>
         </div>
         {% endfor %}
 
