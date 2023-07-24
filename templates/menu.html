@@ -20,13 +20,23 @@
             background: var(--tg-theme-bg-color);
         }
         #main {
-
-            padding: 20px;
-            text-align: center;
-            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 1rem;
         }
         item {
-            flex: 50%;
+            background-color: dodgerblue;
+            color: white;
+            padding: 1rem;
+            height: 4rem;
+        }
+
+        @media (min-width: 600px) {
+            #main {grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 900px) {
+            #main { grid-template-columns: repeat(3, 1fr); }
         }
         h1 {
             margin-top: 50px;
@@ -61,24 +71,16 @@
 </head>
 <body>
     <div id="main">
+        <h1>Онлайн магазин</h1>
+        {% for id, name, price, cost, photo in item_list %}
         <div id="item">
-            <h1>Онлайн магазин</h1>
-            <img src="https://cdn-icons-png.flaticon.com/512/5787/5787016.png">
-            <p>Lorem ipsum dolor sit amet, consectetur adipicisic elit. Accisua ipsum magin, moiesla.</p>
+            <h2>{{name}}</h2>
+            <img src="{{photo}}">
+            <p>Цена - {{price}}</p>
             <button id="buy">Купить</button>
         </div>
-        <div id="item">
-            <h1>Онлайн магазин</h1>
-            <img src="https://cdn-icons-png.flaticon.com/512/5787/5787016.png">
-            <p>Lorem ipsum dolor sit amet, consectetur adipicisic elit. Accisua ipsum magin, moiesla.</p>
-            <button id="buy">Купить</button>
-        </div>
-        <div id="item">
-            <h1>Онлайн магазин</h1>
-            <img src="https://cdn-icons-png.flaticon.com/512/5787/5787016.png">
-            <p>Lorem ipsum dolor sit amet, consectetur adipicisic elit. Accisua ipsum magin, moiesla.</p>
-            <button id="buy">Купить</button>
-        </div>
+        {% endfor %}
+
     </div>
     <form id="form">
         <input type="text" placeholder="Имя" id="user_name">

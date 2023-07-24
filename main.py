@@ -22,6 +22,14 @@ async def root():
 
 @app.get('/menu')
 async def show_menu(request: Request):
+    cursor.execute('SELECT * FROM goods')
+    item_list = cursor.fetchall()
+    return templates.TemplateResponse('menu.html', {'request': request,
+                                                    'item_list': item_list
+                                                    })
 
-    return templates.TemplateResponse('menu.html', {'request': request})
+
+# Certificate is saved at: /etc/letsencrypt/live/davidwerent.online/fullchain.pem
+# Key is saved at:         /etc/letsencrypt/live/davidwerent.online/privkey.pem
+# uvicorn main:app --host 0.0.0.0 --port 443 --ssl-certfile /etc/letsencrypt/live/davidwerent.online/fullchain.pem --ssl-keyfile /etc/letsencrypt/live/davidwerent.online/privkey.pem
 
