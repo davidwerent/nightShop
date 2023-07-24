@@ -21,7 +21,7 @@
         }
         #main {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 5% auto;
             display: grid;
             gap: 1rem;
         }
@@ -30,6 +30,7 @@
             color: white;
             padding: 1rem;
             height: 4rem;
+
         }
 
         @media (min-width: 600px) {
@@ -44,7 +45,7 @@
         }
         img {
             width: 70px;
-            margin: 30px auto;
+            margin: 10px auto;
         }
         p {
             width: 350px;
@@ -53,7 +54,7 @@
         button {
             border: 0;
             border-radius: 5px;
-            margin-top: 50px;
+            margin-top: 5px;
             height: 60px;
             width: 200px;
             font-size: 20px;
@@ -70,19 +71,20 @@
 
 </head>
 <body>
+    <h1>Онлайн магазин</h1>
     <div id="main">
-        <h1>Онлайн магазин</h1>
         {% for id, name, price, cost, photo in item_list %}
         <div id="item">
             <h2>{{name}}</h2>
             <img src="{{photo}}">
             <p>Цена - {{price}}</p>
-            <button id="buy">Купить</button>
+            <button id="buy">В корзину</button>
         </div>
         {% endfor %}
 
     </div>
     <form id="form">
+        <h1>Оформление заказа</h1>
         <input type="text" placeholder="Имя" id="user_name">
         <input type="text" placeholder="email" id="user_email">
         <input type="text" placeholder="phone" id="user_phone">
