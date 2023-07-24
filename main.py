@@ -25,7 +25,7 @@ async def show_menu(request: Request):
 
     return templates.TemplateResponse('menu.html', {'request': request})
 
-if __name__ = 'main':
+if __name__ == 'main':
     uvicorn.run(
                app,
                host="0.0.0.0",
