@@ -76,8 +76,9 @@
 
 </head>
 <body>
-    <h1>Онлайн магазин</h1>
+
     <div id="main">
+        <h1>Онлайн магазин</h1>
         {% for id, name, price, cost, photo, desc in item_list %}
         <div class="item">
             <div>
@@ -105,8 +106,12 @@
             </div>
         </div>
         {% endfor %}
+    </div>
+
+    <div class="cart">
 
     </div>
+
     <form id="form">
         <h1>Оформление заказа</h1>
         <input type="text" placeholder="Имя" id="user_name">
