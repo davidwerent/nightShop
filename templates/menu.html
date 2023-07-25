@@ -95,7 +95,7 @@
                     <button id="remove{{id}}">-</button>
                 </div>
                 <div class="button-counter">
-                    <input type="number" placeholder="0" style="max-width: 35px">
+                    <input type="number" placeholder="0" style="max-width: 35px" id="item_count{{id}}">
                 </div>
                 <div class="button-counter">
                     <button id="add{{id}}">+</button>
@@ -117,15 +117,29 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     let tg = window.Telegram.WebApp;
-    let buy = document.getElementById("buy");
     let order = document.getElementById("order");
     tg.expand();
 
-    buy.addEventListener("click", () => {
-        document.getElementById("main").style.display = "none";
-        document.getElementById("form").style.display = "block";
-        document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
-    });
+
+    {% for id, name, price, cost, photo, des in item_list %}
+        let btn_rem{{id}} = document.getElementById("remove{{id}}");
+        let btn_add{{id}} = document.getElementById("add{{id}}");
+        let item_count{{id}} = document.getElementById("item_count{{id}}");
+        btn_add{{id}}.addEventListener("click", () => {
+            var temp = Number(item_count{{id}}.value) + 1;
+            item_count{{id}}.value = temp
+        });
+        btn_rem{{id}}.addEventListener("click", () => {
+            var temp = Number(item_count{{id}}.value);
+            if (temp-1 <= 0) {
+                item_count{{id}}.value = 0
+            }
+            else {
+                item_count{{id}}.value = temp - 1;
+            }
+
+        });
+    {% endfor %}
 
     order.addEventListener("click", () => {
         tg.close();
