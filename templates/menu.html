@@ -144,9 +144,15 @@
         });
     {% endfor %}
 
+    tg.onEvent("mainButtonClicked", function () {
+        document.getElementById("main").style.display = "none";
+        document.getElementById("form").style.display = "block";
+    });
+
     order.addEventListener("click", () => {
         tg.close();
     });
+
 
 </script>
 </body>
