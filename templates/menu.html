@@ -129,8 +129,8 @@
         let item_count{{id}} = document.getElementById("item_count{{id}}");
         btn_add{{id}}.addEventListener("click", () => {
             var temp = Number(item_count{{id}}.value) + 1;
-            item_count{{id}}.value = temp
-            tg.MainButton.
+            item_count{{id}}.value = temp;
+            tg.MainButton.setText("В корзину");
         });
         btn_rem{{id}}.addEventListener("click", () => {
             var temp = Number(item_count{{id}}.value);
