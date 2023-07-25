@@ -119,6 +119,8 @@
     let tg = window.Telegram.WebApp;
     let order = document.getElementById("order");
     tg.expand();
+    tg.MainButton.show();
+    tg.MainButton.setText("В корзине пусто :(");
 
 
     {% for id, name, price, cost, photo, des in item_list %}
@@ -128,11 +130,12 @@
         btn_add{{id}}.addEventListener("click", () => {
             var temp = Number(item_count{{id}}.value) + 1;
             item_count{{id}}.value = temp
+            tg.MainButton.
         });
         btn_rem{{id}}.addEventListener("click", () => {
             var temp = Number(item_count{{id}}.value);
             if (temp-1 <= 0) {
-                item_count{{id}}.value = 0
+                item_count{{id}}.value = 0;
             }
             else {
                 item_count{{id}}.value = temp - 1;
