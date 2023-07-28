@@ -171,17 +171,10 @@
     {% endfor %}
 
     tg.onEvent("mainButtonClicked", function () {
-        if (document.getElementById("main").style.display === "none"){
-            document.getElementById("main").style.display = "block";
-            document.getElementById("form").style.display = "none";
-            tg.MainButton.setText("Редактировать заказ");
-        }
-        if (document.getElementById("form").style.display === "none"){
-            document.getElementById("main").style.display = "none";
-            document.getElementById("form").style.display = "block";
-            tg.MainButton.setText("Оформить заказ");
-        }
 
+        document.getElementById("main").style.display = "none";
+        document.getElementById("form").style.display = "block";
+        tg.MainButton.setText("Редактировать заказ");
     });
 
     order.addEventListener("click", () => {
