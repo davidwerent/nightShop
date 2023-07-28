@@ -73,10 +73,8 @@
             text-align: center;
         }
     </style>
-
 </head>
 <body>
-
     <div id="main">
         <h1>Онлайн магазин</h1>
         {% for id, name, price, cost, photo, desc in item_list %}
@@ -96,22 +94,17 @@
                     <button id="remove{{id}}">-</button>
                 </div>
                 <div class="button-counter">
-                    <input type="number" placeholder="0" style="max-width: 35px" id="item_count{{id}}">
+                    <input type="number" placeholder="0" style="max-width: 35px" id="item_count{{id}}" class="counter">
                 </div>
                 <div class="button-counter">
                     <button id="add{{id}}">+</button>
                 </div>
-
-
             </div>
         </div>
         {% endfor %}
     </div>
-
     <div class="cart">
-
     </div>
-
     <form id="form">
         <h1>Оформление заказа</h1>
         <input type="text" placeholder="Имя" id="user_name">
@@ -126,7 +119,15 @@
     tg.expand();
     tg.MainButton.show();
     tg.MainButton.setText("В корзине пусто :(");
-
+    function check_count() {
+        let counters = document.getElementsByClassName("counter");
+        let sum = 0;
+        Array.prototype.forEach.call(counters, function(count){
+            sum += Number(count.value);
+        });
+        console.log(sum);
+        return sum === 0;
+    }
 
     {% for id, name, price, cost, photo, des in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
@@ -136,6 +137,12 @@
             var temp = Number(item_count{{id}}.value) + 1;
             item_count{{id}}.value = temp;
             tg.MainButton.setText("В корзину");
+            if (check_count()){
+                tg.MainButton.setText("В корзину");
+            }
+            else {
+                tg.MainButton.setText("В корзине пусто:(");
+            }
         });
         btn_rem{{id}}.addEventListener("click", () => {
             var temp = Number(item_count{{id}}.value);
@@ -145,8 +152,22 @@
             else {
                 item_count{{id}}.value = temp - 1;
             }
+            if (check_count()){
+                tg.MainButton.setText("В корзину");
+            }
+            else {
+                tg.MainButton.setText("В корзине пусто:(");
+            }
 
         });
+        item_count{{id}}.addEventListener("change", () => {
+            if (check_count()){
+                tg.MainButton.setText("В корзину");
+            }
+            else {
+                tg.MainButton.setText("В корзине пусто:(");
+            }
+    });
     {% endfor %}
 
     tg.onEvent("mainButtonClicked", function () {
@@ -157,6 +178,8 @@
     order.addEventListener("click", () => {
         tg.close();
     });
+
+
 
 
 </script>
