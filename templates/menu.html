@@ -137,7 +137,7 @@
             var temp = Number(item_count{{id}}.value) + 1;
             item_count{{id}}.value = temp;
             tg.MainButton.setText("В корзину");
-            if (check_count()){
+            if (!check_count()){
                 tg.MainButton.setText("В корзину");
             }
             else {
@@ -152,7 +152,7 @@
             else {
                 item_count{{id}}.value = temp - 1;
             }
-            if (check_count()){
+            if (!check_count()){
                 tg.MainButton.setText("В корзину");
             }
             else {
@@ -161,7 +161,7 @@
 
         });
         item_count{{id}}.addEventListener("change", () => {
-            if (check_count()){
+            if (!check_count()){
                 tg.MainButton.setText("В корзину");
             }
             else {
