@@ -175,6 +175,9 @@
         document.getElementById("main").style.display = "none";
         document.getElementById("form").style.display = "block";
         tg.MainButton.setText("Редактировать заказ");
+        if (document.getElementById("main").style.display === "none"){
+            document.getElementById("main").style.display="initial";
+        }
     });
 
     order.addEventListener("click", () => {
