@@ -75,6 +75,9 @@
     </style>
 </head>
 <body>
+    <div class="toggle">
+        <button id="toggle_btn">toggle show\hide</button>
+    </div>
     <div id="main">
         <h1>Онлайн магазин</h1>
         {% for id, name, price, cost, photo, desc in item_list %}
@@ -103,8 +106,7 @@
         </div>
         {% endfor %}
     </div>
-    <div class="cart">
-    </div>
+
     <form id="form">
         <h1>Оформление заказа</h1>
         <input type="text" placeholder="Имя" id="user_name">
@@ -128,6 +130,23 @@
         console.log(sum);
         return sum === 0;
     }
+    let btn_toggle = document.getElementById("toggle_btn");
+    let menu = document.getElementById("main");
+    let confirm = document.getElementById("form");
+
+    btn_toggle.addEventListener("click", () => {
+        if (menu.style.display === "block"){
+            menu.style.display = "none";
+            confirm.style.display = "block";
+            tg.MainButton.setText("Редактировать заказ");
+        }
+        else {
+            menu.style.display = "block";
+            confirm.style.display = "none";
+            tg.MainButton.setText("Оформить заказ");
+        }
+    });
+
 
     {% for id, name, price, cost, photo, des in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
@@ -171,12 +190,15 @@
     {% endfor %}
 
     tg.onEvent("mainButtonClicked", function () {
-
-        document.getElementById("main").style.display = "none";
-        document.getElementById("form").style.display = "block";
-        tg.MainButton.setText("Редактировать заказ");
-        if (document.getElementById("main").style.display === "none"){
-            document.getElementById("main").style.display="initial";
+       if (menu.style.display === "block"){
+            menu.style.display = "none";
+            confirm.style.display = "block";
+            tg.MainButton.setText("Редактировать заказ");
+        }
+        else {
+            menu.style.display = "block";
+            confirm.style.display = "none";
+            tg.MainButton.setText("Оформить заказ");
         }
     });
 
