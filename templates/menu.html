@@ -108,9 +108,13 @@
     </div>
 
     <form id="form">
-        <h1>Оформление заказа</h1>
+        <h1>О заказе:</h1>
+        <div>
+            <div>Сумма заказа: </div><div id="sum">0 руб.</div>
+        </div>
+        <h1>Получатель</h1>
         <input type="text" placeholder="Имя" id="user_name">
-        <input type="text" placeholder="email" id="user_email">
+        <input type="text" placeholder="Адрес" id="user_address">
         <input type="text" placeholder="phone" id="user_phone">
         <button id="order">Оформить</button>
     </form>
@@ -118,17 +122,34 @@
 <script>
     let tg = window.Telegram.WebApp;
     let order = document.getElementById("order");
+    let sum = document.getElementById("sum");
     tg.expand();
     tg.MainButton.show();
     tg.MainButton.setText("В корзине пусто :(");
+    let total_cost = 0;
     function check_count() {
         let counters = document.getElementsByClassName("counter");
-        let sum = 0;
+        let sum_item = 0;
+        let price_list = [];
+        total_cost = 0;
+        {% for id, name, price, cost, photo, des in item_list %}
+            price_list.push({{price}});
+        {% endfor %}
         Array.prototype.forEach.call(counters, function(count){
-            sum += Number(count.value);
+            sum_item += Number(count.value);
         });
-        console.log(sum);
-        return sum === 0;
+        console.log(sum_item);
+        for (let i = 0; i < counters.length; i++){
+            if (counters[i].value == Number("0")) {
+
+            }
+            else {
+                total_cost += (price_list[i] * counters[i].value);
+            }
+        }
+        console.log(total_cost);
+        sum.innerText=total_cost + " руб.";
+        return sum_item === 0;
     }
     let btn_toggle = document.getElementById("toggle_btn");
     let menu = document.getElementById("main");
