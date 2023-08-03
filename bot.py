@@ -20,11 +20,8 @@ async def start(message: types.Message):
 @dp.message_handler(content_types=['web_app_data'])
 async def web_app(message: types.Message):
     res = json.loads(message.web_app_data.data)
-    print(res)
-    print(res[0])
-    print(res[1]["id"])
 
-    request = res
+    request = str(res)
     user_id = message.from_user.id
     date = datetime.now()
     address = res[0]['address']
@@ -36,14 +33,23 @@ async def web_app(message: types.Message):
     total_cost = 0
     for item in res:
         print(item)
-        total_sum += item['price'] * item['count']
-        total_cost += item['cost'] * item['count']
+        total_sum += float(item['price']) * float(item['count'])
+        total_cost += float(item['cost']) * float(item['count'])
     print(f'total sum = {total_sum}')
     print(f'total cost = {total_cost}')
-
-
-
-    await message.answer(res)
+    new_order = (
+        request,
+        total_sum,
+        total_cost,
+        user_id,
+        date,
+        address,
+        phone,
+        name
+    )
+    cursor.execute('INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name) VALUES (?,?,?,?,?,?,?,?)', new_order)
+    conn.commit()
+    await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.')
 
 
 executor.start_polling(dp)
