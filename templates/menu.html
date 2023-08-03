@@ -356,6 +356,7 @@
     name_label.value = tg.initDataUnsafe.user.first_name;
     tg.expand();
 
+    //tg.MainButton.setText("В корзине пусто :(");
     let total_cost = 0;
     function check_count() {
         let counters = document.getElementsByClassName("counter");
@@ -404,14 +405,16 @@
         let btn_add{{id}} = document.getElementById("add{{id}}");
         let item_count{{id}} = document.getElementById("item_count{{id}}");
         btn_add{{id}}.addEventListener("click", () => {
+            tg.MainButton.show();
             var temp = Number(item_count{{id}}.value) + 1;
             item_count{{id}}.value = temp;
-            tg.MainButton.setText("В корзину");
+            //tg.MainButton.setText("В корзину");
             if (!check_count()){
-                tg.MainButton.setText("В корзину");
+                tg.MainButton.setText("К оформлению");
             }
             else {
-                tg.MainButton.setText("В корзине пусто:(");
+                tg.MainButton.disable();
+                tg.MainButton.setText("К оформлению2");
             }
         });
         btn_rem{{id}}.addEventListener("click", () => {
@@ -423,10 +426,11 @@
                 item_count{{id}}.value = temp - 1;
             }
             if (!check_count()){
-                tg.MainButton.setText("В корзину");
+                tg.MainButton.setText("К оформлению");
             }
             else {
-                tg.MainButton.setText("В корзине пусто:(");
+                tg.MainButton.disable();
+                tg.MainButton.setText("К оформлению2");
             }
 
         });
