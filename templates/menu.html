@@ -445,7 +445,7 @@
     {% endfor %}
     document.getElementById("main")
     tg.onEvent("mainButtonClicked", function () {
-       if (menu.style.display === "block"){
+       if (confirm.style.display === "block"){
             menu.style.display = "none";
             confirm.style.display = "block";
             tg.MainButton.setText("Редактировать заказ");
