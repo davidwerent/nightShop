@@ -383,7 +383,8 @@
     function get_item_ordered() {
         let counters = document.getElementsByClassName("counter");
         let price_list = [];
-        let items = []
+        let cost_list = [];
+        let items = [];
         let user = {
             address: document.getElementById("address").value,
             phone: document.getElementById("phone").value,
@@ -392,6 +393,7 @@
         items.push(user);
         {% for id, name, price, cost, photo, des in item_list %}
             price_list.push({{price}});
+            cost_list.push({{cost}});
         {% endfor %}
         for (let i =0; i < counters.length; i++)
         {
@@ -401,7 +403,8 @@
                 let item = {
                     id: i,
                     price: price_list[i],
-                    count: counters[i].value
+                    count: counters[i].value,
+                    cost: cost_list[i]
                 }
                 items.push(item);
             }
