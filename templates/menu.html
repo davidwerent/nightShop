@@ -289,9 +289,7 @@
     </style>
 </head>
 <body>
-    <div class="toggle">
-        <button id="toggle_btn">toggle show\hide</button>
-    </div>
+
     <div id="main">
         <h1>1. ВЫБИРАЙТЕ ТОВАР</h1>
         {% for id, name, price, cost, photo, desc in item_list %}
@@ -382,23 +380,12 @@
         sum.innerText=total_cost + " руб.";
         return sum_item === 0;
     }
-    let btn_toggle = document.getElementById("toggle_btn");
+
     let menu = document.getElementById("main");
     let confirm = document.getElementById("form");
     confirm.style.display = "none";
 
-    btn_toggle.addEventListener("click", () => {
-        if (menu.style.display === "block"){
-            menu.style.display = "none";
-            confirm.style.display = "block";
-            tg.MainButton.setText("К заказу");
-        }
-        else {
-            menu.style.display = "block";
-            confirm.style.display = "none";
-            tg.MainButton.setText("К оформлению");
-        }
-    });
+
 
 
     {% for id, name, price, cost, photo, des in item_list %}
