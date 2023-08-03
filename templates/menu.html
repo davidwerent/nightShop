@@ -331,8 +331,8 @@
                 <label class="text-field__label" for="name">Ваше имя</label>
             </div>
             <div class="text-field text-field_floating-3">
-                <input class="text-field__input" type="email" id="email" name="email" placeholder="+7-XXX-XXX-XX-XX">
-                <label class="text-field__label" for="email">Номер телефона</label>
+                <input class="text-field__input" type="phone" id="phone" name="phone" placeholder="+7-XXX-XXX-XX-XX">
+                <label class="text-field__label" for="phone">Номер телефона</label>
             </div>
             <div class="text-field text-field_floating-3">
                 <input class="text-field__input" type="address" id="address" name="address" placeholder="Адрес доставки">
@@ -400,6 +400,12 @@
                 items.push(item);
             }
         }
+        let user = {
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            name: document.getElementById("name").value
+        }
+        items.push(user);
         return items;
     }
 
