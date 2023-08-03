@@ -391,12 +391,12 @@
         if (menu.style.display === "block"){
             menu.style.display = "none";
             confirm.style.display = "block";
-            tg.MainButton.setText("Редактировать заказ");
+            tg.MainButton.setText("К заказу");
         }
         else {
             menu.style.display = "block";
             confirm.style.display = "none";
-            tg.MainButton.setText("Оформить заказ");
+            tg.MainButton.setText("К оформлению");
         }
     });
 
@@ -415,7 +415,7 @@
             }
             else {
                 tg.MainButton.disable();
-                tg.MainButton.setText("К оформлению2");
+                tg.MainButton.setText("Добавьте товар");
             }
         });
         btn_rem{{id}}.addEventListener("click", () => {
@@ -431,7 +431,7 @@
             }
             else {
                 tg.MainButton.disable();
-                tg.MainButton.setText("К оформлению2");
+                tg.MainButton.setText("Добавьте товар");
             }
 
         });
@@ -440,7 +440,7 @@
                 tg.MainButton.setText("В корзину");
             }
             else {
-                tg.MainButton.setText("В корзине пусто:(");
+                tg.MainButton.setText("Добавьте товар");
             }
     });
     {% endfor %}
