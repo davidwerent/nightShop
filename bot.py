@@ -33,9 +33,13 @@ async def web_app(message: types.Message):
 
     res.pop(0)
     total_sum = 0
+    total_cost = 0
     for item in res:
         print(item)
         total_sum += item['price'] * item['count']
+        total_cost += item['cost'] * item['count']
+    print(f'total sum = {total_sum}')
+    print(f'total cost = {total_cost}')
 
 
 
