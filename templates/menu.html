@@ -380,6 +380,28 @@
         sum.innerText=total_cost + " руб.";
         return sum_item === 0;
     }
+    function get_item_ordered() {
+        let counters = document.getElementsByClassName("counter");
+        let price_list = [];
+        let items = []
+        {% for id, name, price, cost, photo, des in item_list %}
+            price_list.push({{price}});
+        {% endfor %}
+        for (let i =0;, i < counters.length; i++)
+        {
+            if (counters[i].value == Number("0")) {
+
+            } else {
+                let item = {
+                    id: i;
+                    price: price_list[i];
+                    count: counters[i].value;
+                }
+                items.push(item);
+            }
+        }
+        return items;
+    }
 
     let menu = document.getElementById("main");
     let confirm = document.getElementById("form");
@@ -446,6 +468,7 @@
     });
 
     order.addEventListener("click", () => {
+        tg.sendData(JSON.stringify(get_item_ordered()));
         tg.close();
     });
 
