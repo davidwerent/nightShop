@@ -384,6 +384,12 @@
         let counters = document.getElementsByClassName("counter");
         let price_list = [];
         let items = []
+        let user = {
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            name: document.getElementById("name").value
+        }
+        items.push(user);
         {% for id, name, price, cost, photo, des in item_list %}
             price_list.push({{price}});
         {% endfor %}
@@ -400,12 +406,7 @@
                 items.push(item);
             }
         }
-        let user = {
-            address: document.getElementById("address").value,
-            phone: document.getElementById("phone").value,
-            name: document.getElementById("name").value
-        }
-        items.push(user);
+
         return items;
     }
 
