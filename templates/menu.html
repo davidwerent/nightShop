@@ -288,6 +288,13 @@
 }
     .category-container{
         display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    .category-item {
+        width: 100px;
+        max-width: 250px;
+        margin: 10px;
     }
     </style>
 </head>
@@ -298,12 +305,10 @@
         <div class="category-container">
             {% for category in category_list %}
                 <div class="category-item">
-                    {{category}}
+                    <button id="category{{loop.index}}"> {{category}} </button>
                 </div>
             {% endfor %}
-            <div class="category">
 
-            </div>
         </div>
         {% for id, name, price, cost, photo, desc, category in item_list %}
         <div class="item">
