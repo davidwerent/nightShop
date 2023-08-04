@@ -296,6 +296,20 @@
         max-width: 250px;
         margin: 10px;
     }
+    .button-category {
+        border: 1rem;
+            border-radius: 10px;
+            margin-top: 5px;
+            height: 50px;
+            width: 150px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 500ms ease;
+            color: var(--tg-theme-button-color);
+            background: var(--tg-theme-button-text-color);
+    }
+
     </style>
 </head>
 <body>
@@ -305,7 +319,7 @@
         <div class="category-container">
             {% for category in category_list %}
                 <div class="category-item">
-                    <button id="category{{loop.index}}"> {{category}} </button>
+                    <button id="category{{loop.index}}" class="button-category"> {{category}} </button>
                 </div>
             {% endfor %}
 
