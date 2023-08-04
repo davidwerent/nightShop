@@ -286,13 +286,26 @@
     50% { background-position: 400% 0; }
     100% { background-position: 0 0; }
 }
+    .category-container{
+        display: flex;
+    }
     </style>
 </head>
 <body>
 
     <div id="main">
-        <h1>1. ВЫБИРАЙТЕ ТОВАР</h1>
-        {% for id, name, price, cost, photo, desc in item_list %}
+        <h1>МЕНЮ</h1>
+        <div class="category-container">
+            {% for category in category_list %}
+                <div class="category-item">
+                    {{category}}
+                </div>
+            {% endfor %}
+            <div class="category">
+
+            </div>
+        </div>
+        {% for id, name, price, cost, photo, desc, category in item_list %}
         <div class="item">
             <div class="desc-item">
                 <div>
@@ -361,7 +374,7 @@
         let sum_item = 0;
         let price_list = [];
         total_cost = 0;
-        {% for id, name, price, cost, photo, des in item_list %}
+        {% for id, name, price, cost, photo, des, category in item_list %}
             price_list.push({{price}});
         {% endfor %}
         Array.prototype.forEach.call(counters, function(count){
@@ -391,7 +404,7 @@
             name: document.getElementById("name").value
         }
         items.push(user);
-        {% for id, name, price, cost, photo, des in item_list %}
+        {% for id, name, price, cost, photo, des, category in item_list %}
             price_list.push({{price}});
             cost_list.push({{cost}});
         {% endfor %}
@@ -420,7 +433,7 @@
 
 
 
-    {% for id, name, price, cost, photo, des in item_list %}
+    {% for id, name, price, cost, photo, des, category in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
         let btn_add{{id}} = document.getElementById("add{{id}}");
         let item_count{{id}} = document.getElementById("item_count{{id}}");

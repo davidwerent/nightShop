@@ -16,7 +16,15 @@ cursor = conn.cursor()
 async def start(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
-    await message.answer(WELCOME_MESSAGE, reply_markup=markup)
+
+    cursor.execute('SELECT * FROM orders WHERE user_id=:user_id and isOpen=:is_open', {'user_id': message.from_user.id,
+                                                                                       'is_open': 1})
+    orders = cursor.fetchall()
+    if len(orders) == 0:
+        await message.answer(WELCOME_MESSAGE, reply_markup=markup)
+        return
+    else:
+        await message.answer(WELCOME_MESSAGE, reply_markup=types.ReplyKeyboardRemove())
 
 
 @dp.callback_query_handler(lambda c: c.data and c.data.startswith('cancel'))
@@ -104,7 +112,8 @@ async def web_app(message: types.Message):
         'INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name, isOpen) VALUES (?,?,?,?,?,?,?,?,?)',
         new_order)
     conn.commit()
-    await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.')
+    await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.',
+                         reply_markup=types.ReplyKeyboardRemove())
 
 
 executor.start_polling(dp)

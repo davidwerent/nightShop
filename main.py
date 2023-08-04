@@ -24,8 +24,15 @@ async def root():
 async def show_menu(request: Request):
     cursor.execute('SELECT * FROM goods')
     item_list = cursor.fetchall()
+
+    cursor.execute('SELECT category FROM goods')
+    category_list = cursor.fetchall()
+    category_unique = list(set(category_list))
+
+
     return templates.TemplateResponse('menu.html', {'request': request,
-                                                    'item_list': item_list
+                                                    'item_list': item_list,
+                                                    'category_list': category_unique
                                                     })
 
 
