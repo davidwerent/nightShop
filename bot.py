@@ -31,7 +31,10 @@ async def start(message: types.Message):
 async def process_callback_button_send_cert(callback_query: types.CallbackQuery):
     cursor.execute('UPDATE orders SET isOpen = ? WHERE user_id = ?', (0, callback_query.from_user.id))
     conn.commit()
-    await bot.send_message(callback_query.from_user.id, 'Заказ отменен!', parse_mode=types.ParseMode.HTML)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
+
+    await bot.send_message(callback_query.from_user.id, 'Заказ отменен!', parse_mode=types.ParseMode.HTML, reply_markup=markup)
     await bot.answer_callback_query(callback_query.id)
 
 
