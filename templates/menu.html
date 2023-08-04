@@ -318,35 +318,42 @@
         <h1>МЕНЮ</h1>
         <div class="category-container">
             {% for category in category_list %}
-                <div class="category-item">
+                <div class="category-item-{{loop.index}}" id="category-item-{{loop.index}}">
                     <button id="category{{loop.index}}" class="button-category"> {{category}} </button>
                 </div>
             {% endfor %}
 
         </div>
-        {% for id, name, price, cost, photo, desc, category in item_list %}
-        <div class="item">
-            <div class="desc-item">
-                <div>
-                    <img src="{{photo}}">
-                </div>
-                <div class="text-desc">
-                    <h2>{{name}}</h2>
-                    <p>{{desc}}</p>
-                    <p>Цена - {{price}} руб.</p>
-                </div>
-            </div>
-            <div class="button-container">
-                <div class="button-counter">
-                    <button id="remove{{id}}">-</button>
-                </div>
-                <div>
-                    <input type="number" placeholder="0" id="item_count{{id}}" class="counter">
-                </div>
-                <div class="button-counter">
-                    <button id="add{{id}}">+</button>
-                </div>
-            </div>
+        {% for cat in category_list %}
+        {% set outloop = loop %}
+        <div id="category_page_{{outloop.index}}">
+            {% for id, name, price, cost, photo, desc, category in item_list %}
+                        <div class="item">
+                            <div class="desc-item">
+                                <div>
+                                    <img src="{{photo}}">
+                                </div>
+                                <div class="text-desc">
+                                    <h2>{{name}}</h2>
+                                    <p>{{desc}}</p>
+                                    <p>Цена - {{price}} руб.</p>
+                                </div>
+                            </div>
+                            <div class="button-container">
+                                <div class="button-counter">
+                                    <button id="remove{{id}}">-</button>
+                                </div>
+                                <div>
+                                    <input type="number" placeholder="0" id="item_count{{id}}" class="counter">
+                                </div>
+                                <div class="button-counter">
+                                    <button id="add{{id}}">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                {% endfor %}
         </div>
         {% endfor %}
     </div>
@@ -449,8 +456,17 @@
     let confirm = document.getElementById("form");
     confirm.style.display = "none";
 
-
-
+    {% for category in category_list %}
+        let cat{{loop.index}} = document.getElementById("category{{loop.index}}");
+        let container{{loop.index}} = document.getElementById("category-item-{{loop.index}}");
+        cat{{loop.index}}.addEventListener("click", () => {
+            container{{loop.index}}.style.display = "block";
+            other_category = document.getElementsByClassName("category-item-{{loop.index}}");
+            Array.prototype.forEach.call(other_category, function (category) {
+                category.style.display = "none";
+            });
+        });
+    {% endfor %}
 
     {% for id, name, price, cost, photo, des, category in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
