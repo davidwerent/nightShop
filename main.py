@@ -54,6 +54,7 @@ async def show_menu(request: Request):
             print(item)
     return templates.TemplateResponse('menu.html', {'request': request,
                                                     'item_list': item_list,
+                                                    'new_item_list': category_list,
                                                     'category_list': category_unique
                                                     })
 

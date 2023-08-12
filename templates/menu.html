@@ -287,28 +287,22 @@
     100% { background-position: 0 0; }
 }
     .category-container{
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
+          background-color: #8e44ad;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        overflow-x: auto;
     }
     .category-item {
-        width: 100px;
-        max-width: 250px;
-        margin: 10px;
+          background-color: #e74c3c;
+          min-width: 100px;
+          margin: 5px;
     }
-    .button-category {
-        border: 1rem;
-            border-radius: 10px;
-            margin-top: 5px;
-            height: 50px;
-            width: 150px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 500ms ease;
-            color: var(--tg-theme-button-color);
-            background: var(--tg-theme-button-text-color);
-    }
+        .category-item::-webkit-scrollbar{
+            display: none;
+        }
+
 
     </style>
 </head>
@@ -317,14 +311,30 @@
     <div id="main">
         <h1>МЕНЮ</h1>
         <div class="category-container">
-
-
+        {% for category in new_item_list %}
+            <div class="category-item">
+                <button id="btn_category_{{loop.index}}" class="button-category">
+                    {% if category == "Alcohol" %}
+                    Алкоголь
+                    {% elif category == "Food" %}
+                    Еда
+                    {% elif category == "Snacks" %}
+                    Снэки
+                    {% endif %}
+                </button>
+            </div>
+        {% endfor %}
         </div>
-        {% for cat in category_list %}
-        {% set outloop = loop %}
-        <div id="category_page_{{outloop.index}}">
-            {% for id, name, price, cost, photo, desc, category in item_list %}
-                        <div class="item">
+        {% for category,v in new_item_list.items() %}
+            {% set outloop = loop %}
+            {{category}}
+            {% set display = "block" %}
+            {% if outloop.index > 1 %}
+                {% set display = "none" %}
+            {% endif %}
+            <div id="category_page_{{outloop.index}}" style="display: {{display}}" class="category-page">
+                {% for id, name, price, cost, photo, desc, category in v %}
+                    <div class="item">
                             <div class="desc-item">
                                 <div>
                                     <img src="{{photo}}">
@@ -347,10 +357,8 @@
                                 </div>
                             </div>
                         </div>
-
-
                 {% endfor %}
-        </div>
+            </div>
         {% endfor %}
     </div>
 
@@ -388,6 +396,24 @@
     let name_label = document.getElementById("name");
     //name_label.value = tg.initDataUnsafe.user.first_name;
     tg.expand();
+    let pages = document.getElementsByClassName("category-page");
+    {% for category, v in new_item_list.items() %}
+        let btn_category_{{loop.index}} = document.getElementById("btn_category_{{loop.index}}");
+        let category{{loop.index}} = document.getElementById("category_page_{{loop.index}}");
+
+        btn_category_{{loop.index}}.addEventListener("click", () => {
+        for (let i = 0; i < pages.length; i++){
+            if (i == {{loop.index-1}}) {
+                pages[i].style.display = 'block';
+            }
+            else {
+                pages[i].style.display = "none";
+            }
+        }
+    });
+    {% endfor %}
+
+
 
     //tg.MainButton.setText("В корзине пусто :(");
     let total_cost = 0;
