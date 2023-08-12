@@ -22,14 +22,36 @@ async def root():
 
 @app.get('/menu')
 async def show_menu(request: Request):
+
     cursor.execute('SELECT * FROM goods')
     item_list = cursor.fetchall()
+    for item in item_list:
+        print(item)
 
     cursor.execute('SELECT category FROM goods')
     category_list = cursor.fetchall()
-    category_unique = list(set(category_list))
+    categorys = list(set(category_list))
+    category_unique = []
+    for cat in categorys:
+        category_unique.append(cat[0].replace('(', '').replace(',)', ''))
+    category_list = {}
+    category_list = category_list.fromkeys(category_unique)
 
 
+    for category in category_list:
+        items = []
+        for item in item_list:
+            if item[6] == category:
+                items.append(item)
+        category_list[category] = items
+
+
+    print('=============')
+
+    for cat in category_list:
+        print(f'CATEGORY={cat}')
+        for item in category_list[cat]:
+            print(item)
     return templates.TemplateResponse('menu.html', {'request': request,
                                                     'item_list': item_list,
                                                     'category_list': category_unique

@@ -317,11 +317,7 @@
     <div id="main">
         <h1>МЕНЮ</h1>
         <div class="category-container">
-            {% for category in category_list %}
-                <div class="category-item-{{loop.index}}" id="category-item-{{loop.index}}">
-                    <button id="category{{loop.index}}" class="button-category"> {{category}} </button>
-                </div>
-            {% endfor %}
+
 
         </div>
         {% for cat in category_list %}
@@ -456,17 +452,7 @@
     let confirm = document.getElementById("form");
     confirm.style.display = "none";
 
-    {% for category in category_list %}
-        let cat{{loop.index}} = document.getElementById("category{{loop.index}}");
-        let container{{loop.index}} = document.getElementById("category-item-{{loop.index}}");
-        cat{{loop.index}}.addEventListener("click", () => {
-            container{{loop.index}}.style.display = "block";
-            other_category = document.getElementsByClassName("category-item-{{loop.index}}");
-            Array.prototype.forEach.call(other_category, function (category) {
-                category.style.display = "none";
-            });
-        });
-    {% endfor %}
+
 
     {% for id, name, price, cost, photo, des, category in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
