@@ -29,7 +29,11 @@ async def start(message: types.Message):
 
 @dp.callback_query_handler(lambda c: c.data and c.data.startswith('cancel'))
 async def process_callback_button_send_cert(callback_query: types.CallbackQuery):
+    cursor.execute('SELECT id FROM orders WHERE user_id = ? and isOpen = ?', (callback_query.from_user.id, 1))
+    order_id = cursor.fetchone()
+    print(f'callback data {callback_query.data}:\norder_id = {order_id[0]}')
     cursor.execute('UPDATE orders SET isOpen = ? WHERE user_id = ?', (0, callback_query.from_user.id))
+    cursor.execute('UPDATE user SET active_order = ? WHERE active_order = ?', (0, order_id[0]))
     conn.commit()
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
@@ -48,6 +52,17 @@ async def get_order_list(message: types.Message):
     cursor.execute('SELECT * FROM orders WHERE user_id=:user_id and isOpen=:is_open', {'user_id': message.from_user.id,
                                                                                     'is_open': 1})
     orders = cursor.fetchall()
+
+    cursor.execute('SELECT in_transit FROM orders WHERE user_id = ? and isOpen= ?',
+                   (message.from_user.id, 1))
+    status = cursor.fetchone()
+    if status is None:
+        await message.answer('У вас нет активного заказа!')
+        return
+    if status[0] == 1:
+        status_text = 'курьер назначен'
+    else:
+        status_text = 'ожидание курьера'
     # print(orders)
     if len(orders) == 0:
         await message.answer('У вас нет активного заказа!')
@@ -56,15 +71,25 @@ async def get_order_list(message: types.Message):
         order = orders[0]
         print(order)
         mes = f'Заказ #{order[0]}\n'
-        mes += f'Статус заказа: у курьера\n'
+        mes += f'Статус заказа: {status_text}\n'
         mes += f'Стоимость заказа: {order[2]} руб\n'
         address = order[1].replace('\'', '\"')
         js = json.loads(address)
         mes += f'Адрес доставки: {js[0].get("address")}'
         await message.answer(mes, reply_markup=keyboard)
         return
+    for order in orders:
+        print(order)
+        order_id = order[0]
+        mes = f'Заказ #{order_id}\n'
+        mes += f'Статус заказа: {status_text}\n'
+        mes += f'Стоимость заказа: {order[2]} руб\n'
+        address = order[1].replace('\'', '\"')
+        js = json.loads(address)
+        mes += f'Адрес доставки: {js[0].get("address")}'
+        await message.answer(mes, reply_markup=keyboard)
 
-    await message.answer('some flow', reply_markup=keyboard)
+    # await message.answer('some flow', reply_markup=keyboard)
 
 
 @dp.message_handler(commands=['new'])
