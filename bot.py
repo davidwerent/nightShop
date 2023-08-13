@@ -142,6 +142,7 @@ async def web_app(message: types.Message):
     conn.commit()
     await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.',
                          reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(message.web_app_data.data)
 
 
 executor.start_polling(dp)

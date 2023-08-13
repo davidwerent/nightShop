@@ -28,6 +28,7 @@ async def show_menu(request: Request):
     for item in item_list:
         print(item)
 
+
     cursor.execute('SELECT category FROM goods')
     category_list = cursor.fetchall()
     categorys = list(set(category_list))
