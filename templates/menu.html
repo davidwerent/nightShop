@@ -325,7 +325,7 @@
             </div>
         {% endfor %}
         </div>
-        {% set count = namespace(value=0) %}
+        {% set count = namespace(value=1) %}
         {% for category,v in new_item_list.items() %}
             {% set outloop = loop %}
             {{category}}
@@ -358,6 +358,7 @@
                                 </div>
                             </div>
                         </div>
+                {% set count.value = count.value + 1 %}
                 {% endfor %}
             </div>
         {% endfor %}
