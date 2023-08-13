@@ -325,6 +325,7 @@
             </div>
         {% endfor %}
         </div>
+        {% set count = namespace(value=0) %}
         {% for category,v in new_item_list.items() %}
             {% set outloop = loop %}
             {{category}}
@@ -347,13 +348,13 @@
                             </div>
                             <div class="button-container">
                                 <div class="button-counter">
-                                    <button id="remove{{id}}">-</button>
+                                    <button id="remove{{count.value}}">-</button>
                                 </div>
                                 <div>
-                                    <input type="number" placeholder="0" id="item_count{{id}}" class="counter">
+                                    <input type="number" placeholder="0" id="item_count{{count.value}}" class="counter">
                                 </div>
                                 <div class="button-counter">
-                                    <button id="add{{id}}">+</button>
+                                    <button id="add{{count.value}}">+</button>
                                 </div>
                             </div>
                         </div>
