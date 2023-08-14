@@ -302,6 +302,28 @@
         .category-item::-webkit-scrollbar{
             display: none;
         }
+        .btn-rainbow{
+             background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: 2px solid;
+            width: 200px;
+  background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 200% auto;
+  animation: bg-gradient 3s linear infinite;
+        }
+        @keyframes bg-gradient {
+            0% {
+                background-position: right bottom;
+            }
+            100% {
+                background-position: left bottom;
+            }
+        }
 
 
     </style>
@@ -348,13 +370,13 @@
                             </div>
                             <div class="button-container">
                                 <div class="button-counter">
-                                    <button id="remove{{count.value}}">-</button>
+                                    <button id="remove{{id}}">-</button>
                                 </div>
                                 <div>
-                                    <input type="number" placeholder="0" id="item_count{{count.value}}" class="counter">
+                                    <input type="number" placeholder="0" id="item_count{{id}}" class="counter">
                                 </div>
                                 <div class="button-counter">
-                                    <button id="add{{count.value}}">+</button>
+                                    <button id="add{{id}}">+</button>
                                 </div>
                             </div>
                         </div>
@@ -390,8 +412,8 @@
 
         </div>
     </form>
-<button id="btn_check">CHECK</button>
-<div id="result">
+<button id="btn_check" class="btn-rainbow">CHECK</button>
+<div id="result" style="max-width: 600px;">
     no result
 </div>
 </body>
@@ -483,6 +505,39 @@
 
         return items;
     }
+    function get_item_dict(){
+        let counters = document.querySelectorAll('input.counter[id^="item_count"]');
+        let price_list = [];
+        let cost_list = [];
+        let items = [];
+        let user = {
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            name: document.getElementById("name").value
+        }
+        items.push(user);
+
+        {% for id, name, price, cost, photo, des, category in item_list %}
+            price_list.push({{price}});
+            cost_list.push({{cost}});
+        {% endfor %}
+
+        counters.forEach(element => {
+            const id = element.id.slice(10);
+            const value = element.value;
+            if (value != "" && value != "0"){
+                item = {
+                    id: Number(id),
+                    price: price_list[Number(id)-1],
+                    count: value,
+                    cost: cost_list[Number(id)-1]
+                }
+                items.push(item);
+            }
+        });
+        console.log(counters);
+        return items;
+    }
 
     let menu = document.getElementById("main");
     let confirm = document.getElementById("form");
@@ -548,13 +603,13 @@
     });
 
     order.addEventListener("click", () => {
-        tg.sendData(JSON.stringify(get_item_ordered()));
+        tg.sendData(JSON.stringify(get_item_dict()));
         tg.close();
     });
     let btn_check = document.getElementById("btn_check");
     btn_check.addEventListener("click", () => {
         let result = document.getElementById("result");
-        result.textContent = JSON.stringify(get_item_ordered());
+        result.textContent = JSON.stringify(get_item_dict());
     });
 
 
