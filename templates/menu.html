@@ -350,7 +350,6 @@
         {% set count = namespace(value=1) %}
         {% for category,v in new_item_list.items() %}
             {% set outloop = loop %}
-            {{category}}
             {% set display = "block" %}
             {% if outloop.index > 1 %}
                 {% set display = "none" %}
@@ -406,14 +405,15 @@
                 <label class="text-field__label" for="address">Адрес доставки</label>
             </div>
             <div align="center" style="width: 100%">
-                <button class="glow-on-hover" type="button" id="order">ЗАКАЗАТЬ</button>
+                <button class="btn-rainbow" type="button" id="order">ЗАКАЗАТЬ</button>
             </div>
 
 
         </div>
     </form>
-<button id="btn_check" class="btn-rainbow">CHECK</button>
+
 <div id="result" style="display: none">
+    <button id="btn_check" class="btn-rainbow">CHECK</button>
     no result
 </div>
 </body>
