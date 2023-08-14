@@ -110,7 +110,7 @@ async def new_order(message: types.Message):
 
 
     if len(orders) != 0:
-        await message.answer('У вас уже есть активный заказ. \nОтмените его или дождитесь получения заказа')
+        await message.answer('У вас уже есть активный заказ 👉🏼 /my \nОтмените его или дождитесь получения заказа')
         return
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
