@@ -413,12 +413,18 @@
         </div>
     </form>
 <button id="btn_check" class="btn-rainbow">CHECK</button>
-<div id="result" style="max-width: 600px;">
+<div id="result" style="display: none">
     no result
 </div>
 </body>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+    var ipAddress = window.location.hostname;
+    if (ipAddress == "127.0.0.1"){
+        let debug = document.getElementById("result");
+        debug.style.display = "block";
+    }
+
     let tg = window.Telegram.WebApp;
     let order = document.getElementById("order");
     let sum = document.getElementById("sum");

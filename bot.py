@@ -41,13 +41,20 @@ async def process_callback_button_send_cert(callback_query: types.CallbackQuery)
     await bot.send_message(callback_query.from_user.id, 'Заказ отменен!', parse_mode=types.ParseMode.HTML, reply_markup=markup)
     await bot.answer_callback_query(callback_query.id)
 
+def get_courier_by_order_id(order_id):
+    cursor.execute('SELECT link FROM user WHERE active_order = ?', (order_id,))
+    result = cursor.fetchone()
+    print(result)
+    if result is not None:
+        return result[0]
+    else:
+        return None
 
 @dp.message_handler(commands=['my'])
 async def get_order_list(message: types.Message):
     keyboard = types.InlineKeyboardMarkup()
     btn_cancel = types.InlineKeyboardButton(text='Отменить заказ', callback_data='cancel')
-    btn_chat_courier = types.InlineKeyboardButton(text='Написать курьеру', url='https://t.me/habramen')
-    keyboard.add(btn_cancel, btn_chat_courier)
+
 
     cursor.execute('SELECT * FROM orders WHERE user_id=:user_id and isOpen=:is_open', {'user_id': message.from_user.id,
                                                                                     'is_open': 1})
@@ -76,6 +83,9 @@ async def get_order_list(message: types.Message):
         address = order[1].replace('\'', '\"')
         js = json.loads(address)
         mes += f'Адрес доставки: {js[0].get("address")}'
+        btn_chat_courier = types.InlineKeyboardButton(text='Написать курьеру',
+                                                      url=f'tg://user?id={get_courier_by_order_id(order[0])}')
+        keyboard.add(btn_cancel, btn_chat_courier)
         await message.answer(mes, reply_markup=keyboard)
         return
     for order in orders:
@@ -142,7 +152,7 @@ async def web_app(message: types.Message):
     conn.commit()
     await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.',
                          reply_markup=types.ReplyKeyboardRemove())
-    await message.answer(message.web_app_data.data)
+    # await message.answer(message.web_app_data.data)
 
 
 executor.start_polling(dp)
