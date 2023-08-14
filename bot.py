@@ -107,11 +107,14 @@ async def new_order(message: types.Message):
     cursor.execute('SELECT * FROM orders WHERE user_id=:user_id and isOpen=:is_open', {'user_id': message.from_user.id,
                                                                                        'is_open': 1})
     orders = cursor.fetchall()
+
+
     if len(orders) != 0:
         await message.answer('У вас уже есть активный заказ. \nОтмените его или дождитесь получения заказа')
         return
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
+
     await message.answer('На клавиатуре есть кнопка "Сделать заказ"', reply_markup=markup)
 
 
@@ -150,6 +153,7 @@ async def web_app(message: types.Message):
         'INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name, isOpen) VALUES (?,?,?,?,?,?,?,?,?)',
         new_order)
     conn.commit()
+    await bot.send_message('5732368072', 'В магазине разместили новый заказ! Проверьте бота с заказом')
     await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.',
                          reply_markup=types.ReplyKeyboardRemove())
     # await message.answer(message.web_app_data.data)

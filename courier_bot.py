@@ -153,7 +153,7 @@ async def show_details(message: types.Message):
         temp = order[1].replace('\'', '\"')
         request = json.loads(temp)
         mes += f"Адрес: {request[0].get('address')}\n"
-        mes += f"Сумма к оплате: {order[2]} руб.\n\"
+        mes += f"Сумма к оплате: {order[2]} руб.\n"
         mes += f"Контакт покупателя: {request[0].get('phone')}\n\n"
         mes += f"Состав заказа (что надо купить):\n"
         counter = 1
