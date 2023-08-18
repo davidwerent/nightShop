@@ -11,6 +11,10 @@ dp = Dispatcher(bot)
 conn = sqlite3.connect('sqlite3.db')
 cursor = conn.cursor()
 
+kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+btn_list = types.KeyboardButton(text='Все заказы')
+btn_area = types.KeyboardButton(text='По районам')
+kb.add(btn_list, btn_area)
 
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
@@ -23,7 +27,9 @@ async def start(message: types.Message):
         keyboard.add(types.KeyboardButton(text='Зарегистрироваться', request_contact=True))
         await message.answer(WELCOME_MESSAGE_COURIER_NOREG ,reply_markup=keyboard)
     else:
-        await message.answer(WELCOME_MESSAGE_COURIER)
+        await message.answer(WELCOME_MESSAGE_COURIER, reply_markup=kb)
+
+
 
 @dp.message_handler(content_types=['contact'])
 async def contact(message: types.Message):
@@ -49,7 +55,8 @@ async def select_order_to_courier(callback_query: types.CallbackQuery):
     cursor.execute('UPDATE orders SET in_transit = ? WHERE id = ?',
                    (1, order_id))
     conn.commit()
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    # markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = types.ReplyKeyboardRemove()
 
     await bot.send_message(callback_query.from_user.id, ORDER_ACCEPT, parse_mode=types.ParseMode.HTML, reply_markup=markup)
     await bot.answer_callback_query(callback_query.id)
@@ -135,6 +142,7 @@ async def complete_order(callback_query: types.CallbackQuery):
 
 @dp.message_handler(commands=['details'])
 async def show_details(message: types.Message):
+    print('123')
     cursor.execute('SELECT active_order FROM user WHERE user_id= ?', (message.from_user.id,))
     active_order = cursor.fetchone()
 
@@ -170,6 +178,45 @@ async def show_details(message: types.Message):
         keyboard.add(btn_cancel, btn_complete)
         await message.answer(mes, reply_markup=keyboard)
 
+
+@dp.callback_query_handler(lambda c: c.data and c.data.startswith('show_area_'))
+async def show_order_in_area(callback_query: types.CallbackQuery):
+    area = callback_query.data[10:]
+    cursor.execute('SELECT * FROM orders WHERE city_area = ?', (area,))
+    orders = cursor.fetchall()
+    if len(orders) == 0:
+        await message.answer('Сейчас нет доступных заказов. Попробуйте позже')
+        return
+    for order in orders:
+        keyboard = types.InlineKeyboardMarkup()
+        # print(order)
+        mes = f"Заказ #{order[0]}\n"
+        mes += f"Сумма заказа: {order[2]}\n"
+        mes += f"Адрес доставки: {order[6]}\n"
+        btn_select = types.InlineKeyboardButton(text='Выбрать', callback_data=f'select{order[0]}')
+        keyboard.add(btn_select)
+        await bot.send_message(callback_query.from_user.id, mes, reply_markup=keyboard)
+        await bot.answer_callback_query(callback_query.id)
+
+
+
+@dp.message_handler(content_types=['text'])
+async def text_handler(message: types.Message):
+    if message.text == 'Все заказы':
+        await show_order(message)
+    elif message.text == 'По районам':
+        cursor.execute('SELECT city_area FROM orders')
+        temp = cursor.fetchall()
+        area_list = []
+        for area in temp:
+            area_list.append(area[0])
+        area_list_unique = list(set(area_list))
+        print(area_list_unique)
+        keyboard = types.InlineKeyboardMarkup()
+        for area in area_list_unique:
+            btn_area = types.InlineKeyboardButton(text=area, callback_data=f'show_area_{area}')
+            keyboard.add(btn_area)
+        await message.answer('Выберите район:', reply_markup=keyboard)
 
 
 
