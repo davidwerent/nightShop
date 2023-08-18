@@ -128,6 +128,7 @@ async def web_app(message: types.Message):
     address = res[0]['address']
     phone = res[0]['phone']
     name = res[0]['name']
+    city_area = res[0]['city_area']
 
     res.pop(0)
     total_sum = 0
@@ -147,10 +148,11 @@ async def web_app(message: types.Message):
         address,
         phone,
         name,
-        True  # status of order  True default
+        True,  # status of order  True default
+        city_area
     )
     cursor.execute(
-        'INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name, isOpen) VALUES (?,?,?,?,?,?,?,?,?)',
+        'INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, city_area) VALUES (?,?,?,?,?,?,?,?,?,?)',
         new_order)
     conn.commit()
     await bot.send_message('5732368072', 'В магазине разместили новый заказ! Проверьте бота с заказом')
