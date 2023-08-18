@@ -435,7 +435,9 @@
         onSelect: function(suggestion) {
             console.log(suggestion);
             console.log(suggestion.data.city_area);
-            city_area = suggestion.data.city_area;
+            if (suggestion.data.city_area !== null) {
+                city_area = suggestion.data.city_area;
+            }
         }
     });
 

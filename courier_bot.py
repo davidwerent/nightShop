@@ -205,8 +205,11 @@ async def text_handler(message: types.Message):
     if message.text == 'Все заказы':
         await show_order(message)
     elif message.text == 'По районам':
-        cursor.execute('SELECT city_area FROM orders')
+        cursor.execute('SELECT city_area FROM orders WHERE isOpen = ?', (1,))
         temp = cursor.fetchall()
+        if len(temp) == 0:
+            await message.answer('Сейчас нет доступных заказов. Попробуйте позже')
+            return
         area_list = []
         for area in temp:
             area_list.append(area[0])

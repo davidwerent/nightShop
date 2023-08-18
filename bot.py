@@ -81,6 +81,7 @@ async def get_order_list(message: types.Message):
         mes += f'Статус заказа: {status_text}\n'
         mes += f'Стоимость заказа: {order[2]} руб\n'
         address = order[1].replace('\'', '\"')
+
         js = json.loads(address)
         mes += f'Адрес доставки: {js[0].get("address")}'
         btn_chat_courier = types.InlineKeyboardButton(text='Написать курьеру',
