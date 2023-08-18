@@ -5,7 +5,14 @@ import sqlite3
 from datetime import datetime
 from messages import *
 
-bot = Bot('6346069359:AAGLEhImbXUnKIJGI0aG5ahR4lY-Nqqv1Bc')
+if platform == 'darwin' or platform == 'win32':
+    DEBUG = True
+else:
+    DEBUG = False
+if DEBUG:
+    bot = Bot('6346069359:AAGLEhImbXUnKIJGI0aG5ahR4lY-Nqqv1Bc')
+else:
+    bot = Bot('6437761295:AAHAhSRkfK-PQYJPpLsgv19BV7L4-wdpFuI')
 dp = Dispatcher(bot)
 
 conn = sqlite3.connect('sqlite3.db')
@@ -82,7 +89,9 @@ async def show_order(message: types.Message):
         # print(order)
         mes = f"Заказ #{order[0]}\n"
         mes += f"Сумма заказа: {order[1]}\n"
-        mes += f"Адрес доставки: {order[2]}\n"
+        address = order[2]
+        flat_id = address.find(', кв ')
+        mes += f"Адрес доставки: {address[:flat_id]}\n"
         btn_select = types.InlineKeyboardButton(text='Выбрать', callback_data=f'select{order[0]}')
         keyboard.add(btn_select)
         await message.answer(mes, reply_markup=keyboard)
@@ -142,7 +151,6 @@ async def complete_order(callback_query: types.CallbackQuery):
 
 @dp.message_handler(commands=['details'])
 async def show_details(message: types.Message):
-    print('123')
     cursor.execute('SELECT active_order FROM user WHERE user_id= ?', (message.from_user.id,))
     active_order = cursor.fetchone()
 

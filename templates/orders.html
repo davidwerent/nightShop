@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Заказы</title>
+    <style>
+        .order-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .order {
+            flex: 100%;
+            border: 1px solid #ccc;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+              padding: 20px;
+
+        }
+        .good {
+            flex: 100%;
+            border: 1px solid #7a00ff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding-left: 8px;
+        }
+    </style>
+</head>
+<body>
+<h1>Список заказов:</h1>
+<div class="order-list">
+    {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in open_orders %}
+        <div class="order">
+            <h2>Заказ #{{id}}</h2>
+            <p>Сумма заказа: {{totalSum}} руб.<br>
+            Примерная себестоимость заказа: {{totalCost}} руб.</p>
+            <p>Адрес доставки: {{address}}</p>
+            <p>Получатель: {{name}}, {{phone}}</p>
+            <h3>Состав заказа:</h3>
+            <ul id="goods{{id}}">
+
+            </ul>
+            {% for order in open_orders_items %}
+                {% if id == order.id %}
+                    {% for good in order.goods %}
+                        <div class="good">
+                            <p>
+                                <b>{{good.name}}</b> - {{good.count}} шт.<br>
+                                Цена: {{good.price}} руб.<br>
+                                Себестоимость: {{good.cost}} руб
+                            </p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+</div>
+<script>
+    {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in open_orders %}
+        let goods_list{{id}} = document.getElementById("goods{{id}}");
+
+    {% endfor %}
+
+</script>
+
+</body>
+</html>

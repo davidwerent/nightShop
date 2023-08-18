@@ -1,11 +1,22 @@
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.exceptions import ChatNotFound
 from aiogram.types.web_app_info import WebAppInfo
 import json
 import sqlite3
 from datetime import datetime
 from messages import *
+import os
+from sys import platform
 
-bot = Bot('6105878178:AAGUaHuZ6stFOZNAfAtR26XxZo-Wn2qgkp8')
+if platform == 'darwin' or platform == 'win32':
+    DEBUG = True
+else:
+    DEBUG = False
+if DEBUG:
+    bot = Bot('6105878178:AAGUaHuZ6stFOZNAfAtR26XxZo-Wn2qgkp8')
+else:
+    bot = Bot('6691558703:AAEntZ91vDAfFe1Rq3ItjAYSNbYRg43j6Zc')
+
 dp = Dispatcher(bot)
 
 conn = sqlite3.connect('sqlite3.db')
@@ -140,6 +151,8 @@ async def web_app(message: types.Message):
         total_cost += float(item['cost']) * float(item['count'])
     print(f'total sum = {total_sum}')
     print(f'total cost = {total_cost}')
+    if total_sum < 5000:
+        total_sum += 1000
     new_order = (
         request,
         total_sum,
@@ -156,7 +169,10 @@ async def web_app(message: types.Message):
         'INSERT INTO orders(request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, city_area) VALUES (?,?,?,?,?,?,?,?,?,?)',
         new_order)
     conn.commit()
-    await bot.send_message('5732368072', 'В магазине разместили новый заказ! Проверьте бота с заказом')
+    try:
+        await bot.send_message('5732368072', 'В магазине разместили новый заказ! Проверьте бота с заказом')
+    except ChatNotFound:
+        pass
     await message.answer(f'Ваш заказ #{cursor.lastrowid} принят!\nСумма заказа: {total_sum} руб.',
                          reply_markup=types.ReplyKeyboardRemove())
     # await message.answer(message.web_app_data.data)
