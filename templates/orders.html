@@ -36,6 +36,7 @@
             Примерная себестоимость заказа: {{totalCost}} руб.</p>
             <p>Адрес доставки: {{address}}</p>
             <p>Получатель: {{name}}, {{phone}}</p>
+            <button id="btn_cancel{{id}}">Отменить заказ</button>
             <h3>Состав заказа:</h3>
             <ul id="goods{{id}}">
 
@@ -60,9 +61,34 @@
 
 </div>
 <script>
-    {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in open_orders %}
-        let goods_list{{id}} = document.getElementById("goods{{id}}");
+    var ipAddress = window.location.hostname;
+    let host_address = "";
+    if (ipAddress == "127.0.0.1") {
+        host_address = "127.0.0.1/delete"
+    }
+    else {
+        host_address = "https://davidwerent.online/delete"
+    }
 
+    {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in open_orders %}
+        let btn_cancel{{id}} = document.getElementById("btn_cancel{{id}}");
+        btn_cancel{{id}}.addEventListener("click", () => {
+            if (confirm('Отменить заказ #{{id}}')){
+                let headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            headers.append('Accept', 'application/json');
+            headers.append('Origin', host_address);
+            fetch('/delete', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    "token": "gudini",
+                    "id": {{id}}
+                })
+            })
+            }
+
+        });
     {% endfor %}
 
 </script>

@@ -110,3 +110,15 @@ async def get_all_orders(request: Request, token: Union[str, None] = None):
                                                         'close_orders': close_orders
                                                         })
 
+class BaseDeleteRequest(BaseModel):
+    token: str = None
+    id: int = None
+
+@app.post('/delete')
+async def delete_order(request: BaseDeleteRequest):
+    print(request)
+    cursor.execute('UPDATE orders SET isOpen = 0 WHERE id = ?', (request.id,))
+    conn.commit()
+
+    return {'status': 200}
+
