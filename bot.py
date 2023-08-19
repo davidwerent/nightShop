@@ -22,7 +22,7 @@ else:
 
 dp = Dispatcher(bot)
 
-conn = sqlite3.connect('sqlite3.db')
+conn = sqlite3.connect(db_name)
 cursor = conn.cursor()
 
 

@@ -8,15 +8,18 @@ from sys import platform
 
 if platform == 'darwin' or platform == 'win32':
     DEBUG = True
+    db_name = 'sqlite3.db'
 else:
     DEBUG = False
+    db_name = 'shop_database.db'
+
 if DEBUG:
     bot = Bot('6346069359:AAGLEhImbXUnKIJGI0aG5ahR4lY-Nqqv1Bc')
 else:
     bot = Bot('6437761295:AAHAhSRkfK-PQYJPpLsgv19BV7L4-wdpFuI')
 dp = Dispatcher(bot)
 
-conn = sqlite3.connect('sqlite3.db')
+conn = sqlite3.connect(db_name)
 cursor = conn.cursor()
 
 kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
