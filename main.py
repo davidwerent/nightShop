@@ -164,3 +164,61 @@ async def delete_order(request: BaseDeleteRequest):
 
     return {'status': 200}
 
+
+@app.post('/edit_goods')
+async def edit_goods(request: Request,
+                    name: str = Form(...),
+                    desc: str = Form(...),
+                    price: int = Form(...),
+                     cost : int = Form(...),
+                     photo: str = Form(...),
+                     category: str = Form(...),
+                     id: int = Form(...)):
+    cursor.execute('UPDATE goods SET name=?,price=?,cost=?,photo=?,description=?,category=? WHERE id = ?',
+                   (name, price, cost, photo, desc, category, id))
+    conn.commit()
+    return await get_goods(request=request, token='gudini')
+
+
+
+@app.get('/goods')
+async def get_goods(request: Request, token: Union[str, None] = None):
+    if token != 'gudini':
+        return {'access': 'denied'}
+    cursor.execute('SELECT * FROM goods')
+    item_list = cursor.fetchall()
+    # for item in item_list:
+        # print(item)
+
+    cursor.execute('SELECT category FROM goods')
+    category_list = cursor.fetchall()
+    categorys = list(set(category_list))
+    category_unique = []
+    for cat in categorys:
+        category_unique.append(cat[0].replace('(', '').replace(',)', ''))
+    category_list = {}
+    category_list = category_list.fromkeys(category_unique)
+
+    for category in category_list:
+        items = []
+        for item in item_list:
+            if item[6] == category:
+                items.append(item)
+        category_list[category] = items
+    '''print('=============')
+
+    for cat in category_list:
+        print(f'CATEGORY={cat}')
+        for item in category_list[cat]:
+            print(item)'''
+    return templates.TemplateResponse('goods.html', {'request': request,
+                                                    'item_list': item_list,
+                                                    'new_item_list': category_list,
+                                                    'category_list': category_unique
+                                                    })
+
+
+
+
+
+

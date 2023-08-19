@@ -36,6 +36,12 @@
         .btn-type{
             font-size: 25px;
         }
+        .button_cancel{
+            font-size: 25px;
+            width: 200px;
+            height: 50px;
+            margin-bottom: 5px;
+        }
         .collapsible{
             background-color: #eee;
             color: #444;
@@ -95,7 +101,7 @@
                     <p id="courier-info{{id}}">Курьер: <a href="tg://user?id={{user.user_id}}">Написать в ТГ</a></p>
                 {% endif %}
             {% endfor %}
-            <button id="btn_cancel{{id}}">Отменить заказ</button>
+            <button id="btn_cancel{{id}}" class="button_cancel">Отменить заказ</button>
             <button type="button" class="collapsible" id="button-collapse{{id}}">Состав заказа:</button>
             <div class="content" id="open-content{{id}}">
                 {% for order in open_orders_items %}
@@ -130,7 +136,7 @@
                     <p id="courier-info{{id}}">Курьер: <a href="tg://user?id={{user.user_id}}">Написать в ТГ</a></p>
                 {% endif %}
             {% endfor %}
-            <button id="btn_cancel{{id}}">Отменить заказ</button>
+            <button id="btn_cancel{{id}}" class="button_cancel">Отменить заказ</button>
             <button type="button" class="collapsible" id="button-collapse{{id}}">Состав заказа:</button>
             <div class="content" id="close-content{{id}}">
                 {% for order in close_orders_items %}

@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Goods</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #main {
+            max-width: 1200px;
+            margin: 5% auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+
+        @media (min-width: 600px) {
+            #main {grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 900px) {
+            #main { grid-template-columns: repeat(3, 1fr); }
+        }
+        button {
+            font-size: 25px;
+        }
+
+        img {
+            width: 7rem;
+            margin: 10px;
+        }
+        p {
+            margin: 0 auto;
+            font-size: 22px;
+        }
+
+        button:hover {
+            background: var(--tg-theme-secondary-bg-color);
+        }
+        .button-container {
+          display: flex;
+            justify-content: space-around;
+        }
+        .item-edit{
+            display: flex;
+            justify-content: center;
+        }
+        .item-delete{
+            display: flex;
+            justify-content: center;
+        }
+        .item {
+            display: flex;
+            flex-direction: column;
+        }
+        .desc-item {
+            display: flex;
+            flex-direction: row;
+        }
+        .text-desc {
+            margin: 5px;
+        }
+        .counter {
+            max-width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+        }
+        .button-edit{
+            transition-duration: 0.4s;
+            width: 250px;
+            border: 2px solid #4CAF50;
+        }
+        .button-edit:hover {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+        .button-delete {
+            transition-duration: 0.4s;
+            width: 250px;
+            border: 2px solid #c9493e;
+        }
+        .button-delete:hover{
+            background-color: #c9493e; /* Green */
+            color: white;
+        }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--tg-theme-text-color);
+      background-color: var(--tg-theme-bg-color);
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    }
+
+    h1 {
+      font-size: 1.25rem;
+        font-weight: 500;
+        margin-top: 50px;
+        margin-bottom: 10px;
+    }
+
+
+    .category-container{
+          background-color: #8e44ad;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        overflow-x: auto;
+    }
+    .category-item {
+          min-width: 100px;
+          margin: 5px;
+        max-width: 200px;
+    }
+        .category-item::-webkit-scrollbar{
+            display: none;
+        }
+        .btn-rainbow{
+              background-color: black;
+              color: white;
+              text-align: center;
+              padding: 10px 20px;
+              border-radius: 5px;
+              font-size: 16px;
+              text-transform: uppercase;
+              border: 2px solid;
+                        width: 200px;
+              background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+              background-size: 200% auto;
+              animation: bg-gradient 7s linear infinite;
+        }
+        @keyframes bg-gradient {
+            0% {
+                background-position: right bottom;
+            }
+            100% {
+                background-position: left bottom;
+            }
+        }
+        .button-category{
+            min-width:100px;
+            font-size: 25px;
+        }
+        .edit-tool{
+            display: none;
+            width: 100%;
+              padding: 50px 0;
+              text-align: center;
+              background-color: lightblue;
+              margin-top: 20px;
+            font-size: 24px;
+        }
+        .desc-edit {
+            resize: both;
+            width: 400px;
+            height: 100px;
+            max-width: 1000px;
+            max-height: 400px;
+        }
+
+    </style>
+</head>
+<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
+<body>
+    <div id="main">
+        <div class="category-container">
+        {% for category in new_item_list %}
+            <div class="category-item">
+                <button id="btn_category_{{loop.index}}" class="button-category">
+                    {% if category == "Alcohol" %}
+                    Алкоголь
+                    {% elif category == "Food" %}
+                    Еда
+                    {% elif category == "Snacks" %}
+                    Снэки
+                    {% endif %}
+                </button>
+            </div>
+        {% endfor %}
+        </div>
+        {% set count = namespace(value=1) %}
+        {% for category,v in new_item_list.items() %}
+            {% set outloop = loop %}
+            {% set display = "block" %}
+            {% if outloop.index > 1 %}
+                {% set display = "none" %}
+            {% endif %}
+            <div id="category_page_{{outloop.index}}" style="display: {{display}}" class="category-page">
+                {% for id, name, price, cost, photo, desc, category in v %}
+                    <div class="item">
+                            <div class="desc-item">
+                                <div>
+                                    <img src="{{photo}}">
+                                </div>
+                                <div class="text-desc">
+                                    <h2>{{name}}</h2>
+                                    <p>{{desc}}</p>
+                                    <p>Цена - {{price}} руб.</p>
+                                    <p>Себестоимость - {{cost}} руб</p>
+                                    <p>Photo: {{photo}}</p>
+                                    <p>Категория: {{category}}</p>
+                                </div>
+                            </div>
+                            <div class="button-container">
+                                <div class="item-edit">
+                                    <button class="button-edit" onclick="myFunction{{id}}()">Редактировать</button>
+                                </div>
+                                <div class="item-delete">
+                                    <button class="button-delete">Удалить</button>
+                                </div>
+                            </div>
+                        <div id="edit-tool{{id}}" class="edit-tool">
+                                        <form method="post" id="edit{{id}}" action="/edit_goods">
+                                            <label for="name{{id}}">Наименование</label>
+                                            <input type="text" id="name{{id}}" name="name" value="{{name}}"><br>
+                                            <label for="desc{{id}}">Описание</label>
+                                            <textarea id="desc{{id}}" name="desc" class="desc-edit">{{desc}}</textarea><br>
+                                            <label for="price{{id}}">Цена</label>
+                                            <input type="text" id="price{{id}}" name="price" value="{{price}}"><br>
+                                            <label for="cost{{id}}">Себестоимость</label>
+                                            <input type="text" id="cost{{id}}" name="cost" value="{{cost}}"><br>
+                                            <label for="photo{{id}}">URL фото</label>
+                                            <input type="text" id="photo{{id}}" name="photo" value="{{photo}}"><br>
+                                            <label for="category{{id}}">Категория</label>
+                                            <input type="text" id="category{{id}}" name="category" value="{{category}}"><br>
+
+                                            <input type="hidden" id="item{{id}}" name="id" value="{{id}}">
+                                            <input class="button-edit" type="submit" value="Изменить">
+                                        </form>
+                                    </div>
+                        </div>
+                {% set count.value = count.value + 1 %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+<div id="result" style="display: none">
+    <button id="btn_check" class="btn-rainbow">CHECK</button>
+    no result
+</div>
+</body>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    let city_area = "";
+    var ipAddress = window.location.hostname;
+    if (ipAddress == "127.0.0.1"){
+        let debug = document.getElementById("result");
+        debug.style.display = "block";
+    }
+
+    {% for id, name, price, cost, photo, des, category in item_list %}
+        function myFunction{{id}}() {
+          var x = document.getElementById("edit-tool{{id}}");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+        }
+    {% endfor %}
+
+
+
+    let tg = window.Telegram.WebApp;
+    let order = document.getElementById("order");
+    let sum = document.getElementById("sum");
+    let name_label = document.getElementById("name");
+    //name_label.value = tg.initDataUnsafe.user.first_name;
+    tg.expand();
+    let pages = document.getElementsByClassName("category-page");
+    {% for category, v in new_item_list.items() %}
+        let btn_category_{{loop.index}} = document.getElementById("btn_category_{{loop.index}}");
+        let category{{loop.index}} = document.getElementById("category_page_{{loop.index}}");
+
+        btn_category_{{loop.index}}.addEventListener("click", () => {
+        for (let i = 0; i < pages.length; i++){
+            if (i == {{loop.index-1}}) {
+                pages[i].style.display = 'block';
+            }
+            else {
+                pages[i].style.display = "none";
+            }
+        }
+    });
+    {% endfor %}
+
+    //tg.MainButton.setText("В корзине пусто :(");
+    let total_cost = 0;
+    function check_count() {
+        let counters = document.getElementsByClassName("counter");
+        let sum_item = 0;
+        let price_list = [];
+        total_cost = 0;
+        {% for id, name, price, cost, photo, des, category in item_list %}
+            price_list.push({{price}});
+        {% endfor %}
+        Array.prototype.forEach.call(counters, function(count){
+            sum_item += Number(count.value);
+        });
+        console.log(sum_item);
+        for (let i = 0; i < counters.length; i++){
+            if (counters[i].value == Number("0")) {
+
+            }
+            else {
+                total_cost += (price_list[i] * counters[i].value);
+            }
+        }
+        console.log(total_cost);
+        sum.innerText=total_cost + " руб.";
+        return sum_item === 0;
+    }
+    function get_item_ordered() {
+        let counters = document.getElementsByClassName("counter");
+        let price_list = [];
+        let cost_list = [];
+        let items = [];
+        let user = {
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            name: document.getElementById("name").value
+        }
+        items.push(user);
+        {% for id, name, price, cost, photo, des, category in item_list %}
+            price_list.push({{price}});
+            cost_list.push({{cost}});
+        {% endfor %}
+        for (let i = 0; i < counters.length; i++){
+            console.log(counters[i].id + " = " + counters[i].value)
+        }
+        for (let i = 0; i < counters.length; i++)
+        {
+            if (counters[i].value == Number("0")) {
+
+            } else {
+                let counter_id = counters[i].id.slice(10)
+                let item = {
+                    id: Number(counter_id),
+                    price: price_list[i],
+                    count: counters[i].value,
+                    cost: cost_list[i]
+                }
+                console.log(`item ${i} = ${item}`);
+                items.push(item);
+            }
+        }
+
+        return items;
+    }
+    function get_item_dict(){
+        let counters = document.querySelectorAll('input.counter[id^="item_count"]');
+        let price_list = [];
+        let cost_list = [];
+        let items = [];
+        let user = {
+            address: document.getElementById("address").value,
+            phone: document.getElementById("phone").value,
+            name: document.getElementById("name").value,
+            city_area: city_area
+        }
+        items.push(user);
+
+        {% for id, name, price, cost, photo, des, category in item_list %}
+            price_list.push({{price}});
+            cost_list.push({{cost}});
+        {% endfor %}
+
+        counters.forEach(element => {
+            const id = element.id.slice(10);
+            const value = element.value;
+            if (value != "" && value != "0"){
+                item = {
+                    id: Number(id),
+                    price: price_list[Number(id)-1],
+                    count: value,
+                    cost: cost_list[Number(id)-1]
+                }
+                items.push(item);
+            }
+        });
+        console.log(counters);
+        return items;
+    }
+
+
+    let btn_check = document.getElementById("btn_check");
+    btn_check.addEventListener("click", () => {
+        let result = document.getElementById("result");
+        result.textContent = JSON.stringify(get_item_dict());
+    });
+
+
+
+</script>
+</body>
+</html>
