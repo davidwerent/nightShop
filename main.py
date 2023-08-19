@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Union
 import uvicorn
 import json
+from sys import platform
 
 templates = Jinja2Templates(directory='templates')
 
