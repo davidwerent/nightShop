@@ -10,8 +10,11 @@ from sys import platform
 
 if platform == 'darwin' or platform == 'win32':
     DEBUG = True
+    db_name = 'sqlite3.db'
 else:
     DEBUG = False
+    db_name = 'shop_database.db'
+
 if DEBUG:
     bot = Bot('6105878178:AAGUaHuZ6stFOZNAfAtR26XxZo-Wn2qgkp8')
 else:

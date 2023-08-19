@@ -103,6 +103,24 @@ async def get_all_orders(request: Request, token: Union[str, None] = None):
 
     cursor.execute('SELECT * FROM orders WHERE isOpen = ?', (0,))
     close_orders = cursor.fetchall()
+    close_order_items = {}
+    close_orders_items = []
+    for order in close_orders:
+        temp = order[1].replace('\'', '\"')
+        # print(f'temp:\n{temp}')
+        req = json.loads(temp)
+        req.pop(0)
+        order_items = []
+        for item in req:
+            # print(item)
+            item.update({'name': get_item_name(item.get('id'))})
+            order_items.append(item)
+        close_order_items = {
+            'id': order[0],
+            'goods': order_items
+        }
+        close_orders_items.append(close_order_items)
+
 
     cursor.execute('SELECT * FROM user')
     users = cursor.fetchall()
@@ -122,6 +140,7 @@ async def get_all_orders(request: Request, token: Union[str, None] = None):
                                                         'open_orders': open_orders,
                                                         'open_orders_items': open_orders_items,
                                                         'close_orders': close_orders,
+                                                        'close_orders_items': close_orders_items,
                                                         'user_list': user_list
                                                         })
 

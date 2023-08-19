@@ -24,11 +24,65 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             padding-left: 8px;
         }
+        .category-container {
+            display: flex;
+            flex-direction: row;
+
+        }
+        .category-item {
+            margin: 5px;
+            max-width: 300px;
+        }
+        .btn-type{
+            font-size: 25px;
+        }
+        .collapsible{
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+        }
+        .active, .collapsible:hover {
+            background-color: #ccc;
+        }
+        .content{
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+            transition: max-height 0.2s ease-out;
+        }
+        .collapsible:after {
+          content: '\02795'; /* Символ юникода для знака "плюс" (+) */
+          font-size: 13px;
+          color: white;
+          float: right;
+          margin-left: 5px;
+        }
+
+        .active:after {
+          content: '\2796'; /* Символ юникода для знака "минус" (-) */
+        }
     </style>
 </head>
 <body>
-<h1>Список заказов:</h1>
-<div class="order-list">
+<div class="category-container">
+    <div class="category-item">
+        <button id="show_open_order" class="btn-type">Открытые заказы</button>
+    </div>
+    <div class="category-item">
+        <button id="show_close_order" class="btn-type">Закрытые заказы</button>
+    </div>
+</div>
+
+
+<div class="order-list" style="display: block" id="open-order-list">
+    <h1>Список открытых заказов:</h1>
     {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in open_orders %}
         <div class="order">
             <h2>Заказ #{{id}}</h2>
@@ -42,27 +96,62 @@
                 {% endif %}
             {% endfor %}
             <button id="btn_cancel{{id}}">Отменить заказ</button>
-            <h3>Состав заказа:</h3>
-            <ul id="goods{{id}}">
-
-            </ul>
-            {% for order in open_orders_items %}
-                {% if id == order.id %}
-                    {% for good in order.goods %}
-                        <div class="good">
-                            <p>
-                                <b>{{good.name}}</b> - {{good.count}} шт.<br>
-                                Цена: {{good.price}} руб.<br>
-                                Себестоимость: {{good.cost}} руб
-                            </p>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+            <button type="button" class="collapsible" id="button-collapse{{id}}">Состав заказа:</button>
+            <div class="content" id="open-content{{id}}">
+                {% for order in open_orders_items %}
+                    {% if id == order.id %}
+                        {% for good in order.goods %}
+                            <div class="good">
+                                <p>
+                                    <b>{{good.name}}</b> - {{good.count}} шт.<br>
+                                    Цена: {{good.price}} руб.<br>
+                                    Себестоимость: {{good.cost}} руб
+                                </p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     {% endfor %}
 
 </div>
+<div class="order-list" style="display: none" id="close-order-list">
+    <h1>Список закрытых заказов:</h1>
+    {% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in close_orders %}
+        <div class="order">
+            <h2>Заказ #{{id}}</h2>
+            <p>Сумма заказа: {{totalSum}} руб.<br>
+            Примерная себестоимость заказа: {{totalCost}} руб.</p>
+            <p>Адрес доставки: {{address}}</p>
+            <p>Получатель: {{name}}, {{phone}}</p>
+            {% for user in user_list %}
+                {% if id == user.active_order %}
+                    <p id="courier-info{{id}}">Курьер: <a href="tg://user?id={{user.user_id}}">Написать в ТГ</a></p>
+                {% endif %}
+            {% endfor %}
+            <button id="btn_cancel{{id}}">Отменить заказ</button>
+            <button type="button" class="collapsible" id="button-collapse{{id}}">Состав заказа:</button>
+            <div class="content" id="close-content{{id}}">
+                {% for order in close_orders_items %}
+                    {% if id == order.id %}
+                        {% for good in order.goods %}
+                            <div class="good">
+                                <p>
+                                    <b>{{good.name}}</b> - {{good.count}} шт.<br>
+                                    Цена: {{good.price}} руб.<br>
+                                    Себестоимость: {{good.cost}} руб
+                                </p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+
 <script>
     var ipAddress = window.location.hostname;
     let host_address = "";
@@ -93,6 +182,45 @@
 
         });
     {% endfor %}
+    let btn_show_open = document.getElementById("show_open_order");
+    let btn_show_close = document.getElementById("show_close_order");
+    let open_orders = document.getElementById("open-order-list");
+    let close_orders = document.getElementById("close-order-list");
+
+    btn_show_open.addEventListener("click", () => {
+        close_orders.style.display = "none";
+        open_orders.style.display = "block";
+
+    });
+    btn_show_close.addEventListener("click", () => {
+        open_orders.style.display = "none";
+        close_orders.style.display = "block";
+    });
+
+    /*{% for id, request, totalSum, totalCost, user_id, date, address, phone, name, isOpen, in_transit, city_area in close_orders %}
+        let col{{id}} = document.getElementById("close-content{{id}}");
+        col{{id}}.addEventListener("click", function () {
+            if (col{{id}}.style.display === "block"){
+                col{{id}}.style.display = "none";
+            } else {
+                col{{id}}.style.display = "block";
+            }
+    });
+    {% endfor %}*/
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
 
 </script>
 
