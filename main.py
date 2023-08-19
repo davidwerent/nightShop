@@ -91,7 +91,7 @@ async def get_all_orders(request: Request, token: Union[str, None] = None):
         req.pop(0)
         order_items = []
         for item in req:
-            print(item)
+            # print(item)
             item.update({'name': get_item_name(item.get('id'))})
             order_items.append(item)
         open_order_items = {
@@ -99,15 +99,30 @@ async def get_all_orders(request: Request, token: Union[str, None] = None):
             'goods': order_items
         }
         open_orders_items.append(open_order_items)
-    print(open_orders_items)
+    # print(open_orders_items)
 
     cursor.execute('SELECT * FROM orders WHERE isOpen = ?', (0,))
     close_orders = cursor.fetchall()
 
+    cursor.execute('SELECT * FROM user')
+    users = cursor.fetchall()
+    print(users)
+    user_list = []
+    for user in users:
+        js_user = {
+            'id': user[0],
+            'user_id': user[1],
+            'phone': user[2],
+            'active_order': user[3]
+        }
+        user_list.append(js_user)
+
+    print(user_list)
     return templates.TemplateResponse('orders.html', {  'request': request,
                                                         'open_orders': open_orders,
                                                         'open_orders_items': open_orders_items,
-                                                        'close_orders': close_orders
+                                                        'close_orders': close_orders,
+                                                        'user_list': user_list
                                                         })
 
 class BaseDeleteRequest(BaseModel):
@@ -117,7 +132,8 @@ class BaseDeleteRequest(BaseModel):
 @app.post('/delete')
 async def delete_order(request: BaseDeleteRequest):
     print(request)
-    cursor.execute('UPDATE orders SET isOpen = 0 WHERE id = ?', (request.id,))
+    cursor.execute('UPDATE orders SET isOpen = 0, in_transit = 0 WHERE id = ?', (request.id,))
+    cursor.execute('UPDATE user SET active_order = 0 WHERE active_order = ?', (request.id,))
     conn.commit()
 
     return {'status': 200}

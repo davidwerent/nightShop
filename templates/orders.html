@@ -36,6 +36,11 @@
             Примерная себестоимость заказа: {{totalCost}} руб.</p>
             <p>Адрес доставки: {{address}}</p>
             <p>Получатель: {{name}}, {{phone}}</p>
+            {% for user in user_list %}
+                {% if id == user.active_order %}
+                    <p id="courier-info{{id}}">Курьер: <a href="tg://user?id={{user.user_id}}">Написать в ТГ</a></p>
+                {% endif %}
+            {% endfor %}
             <button id="btn_cancel{{id}}">Отменить заказ</button>
             <h3>Состав заказа:</h3>
             <ul id="goods{{id}}">
@@ -53,8 +58,6 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-
-
             {% endfor %}
         </div>
     {% endfor %}
