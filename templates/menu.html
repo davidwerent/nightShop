@@ -328,6 +328,30 @@
         .button-category{
             min-width:100px;
         }
+        /* Окно предупреждающего сообщения */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* Кнопка закрытия */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* При наведении курсора мыши на кнопку закрыть */
+.closebtn:hover {
+  color: black;
+}
 
 
     </style>
@@ -338,11 +362,18 @@
 <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
 <body>
+    {% for alert in alerts %}
+        <div class="alert">
+          <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+          {{alert[1]}}<br>
+            {{alert[2]}}
+        </div>
+    {% endfor %}
 
     <div id="main">
         <div class="category-container">
         {% for category in new_item_list %}
-            <div class="category-item">
+            <div class="category-item-{{loop.index}}">
                 <button id="btn_category_{{loop.index}}" class="button-category">
                     {% if category == "Alcohol" %}
                     Алкоголь
@@ -355,16 +386,11 @@
             </div>
         {% endfor %}
         </div>
-        {% set count = namespace(value=1) %}
-        {% for category,v in new_item_list.items() %}
-            {% set outloop = loop %}
-            {% set display = "block" %}
-            {% if outloop.index > 1 %}
-                {% set display = "none" %}
-            {% endif %}
-            <div id="category_page_{{outloop.index}}" style="display: {{display}}" class="category-page">
-                {% for id, name, price, cost, photo, desc, category in v %}
-                    <div class="item">
+        {% for cat in category_list %}
+        {% set outloop = loop %}
+        <div id="category_page_{{outloop.index}}">
+            {% for id, name, price, cost, photo, desc, category in item_list %}
+                        <div class="item">
                             <div class="desc-item">
                                 <div>
                                     <img src="{{photo}}">
@@ -387,9 +413,10 @@
                                 </div>
                             </div>
                         </div>
-                {% set count.value = count.value + 1 %}
+
+
                 {% endfor %}
-            </div>
+        </div>
         {% endfor %}
     </div>
 
@@ -397,7 +424,6 @@
         <h1>О заказе:</h1>
         <div>
             <div>Сумма заказа: </div><div id="sum">0 руб.</div>
-            <div>При заказе от 5000 руб доставка бесплатно. Иначе доставка 1000 руб</div>
         </div>
         <h1>Получатель</h1>
         <div style="max-width: 500px; margin-left: auto; margin-right: auto; padding: 15px;">
@@ -406,73 +432,28 @@
                 <label class="text-field__label" for="name">Ваше имя</label>
             </div>
             <div class="text-field text-field_floating-3">
-                <input class="text-field__input" type="tel" id="phone" name="phone" placeholder="+7-XXX-XXX-XX-XX">
+                <input class="text-field__input" type="phone" id="phone" name="phone" placeholder="+7-XXX-XXX-XX-XX">
                 <label class="text-field__label" for="phone">Номер телефона</label>
             </div>
             <div class="text-field text-field_floating-3">
                 <input class="text-field__input" type="address" id="address" name="address" placeholder="Адрес доставки">
                 <label class="text-field__label" for="address">Адрес доставки</label>
             </div>
-
             <div align="center" style="width: 100%">
-                <button class="btn-rainbow" type="button" id="order">ЗАКАЗАТЬ</button>
+                <button class="glow-on-hover" type="button" id="order">ЗАКАЗАТЬ</button>
             </div>
+
+
         </div>
     </form>
-
-
-
-<div id="result" style="display: none">
-    <button id="btn_check" class="btn-rainbow">CHECK</button>
-    no result
-</div>
-</body>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-
-    let city_area = "";
-    $("#address").suggestions({
-        token: "35b4e3b65c96ba39035eb2e9987490d67ae6df22",
-        type: "ADDRESS",
-        /* Вызывается, когда пользователь выбирает одну из подсказок */
-        onSelect: function(suggestion) {
-            console.log(suggestion);
-            console.log(suggestion.data.city_area);
-            if (suggestion.data.city_area !== null) {
-                city_area = suggestion.data.city_area;
-            }
-        }
-    });
-
-    var ipAddress = window.location.hostname;
-    if (ipAddress == "127.0.0.1"){
-        let debug = document.getElementById("result");
-        debug.style.display = "block";
-    }
-
     let tg = window.Telegram.WebApp;
     let order = document.getElementById("order");
     let sum = document.getElementById("sum");
     let name_label = document.getElementById("name");
     //name_label.value = tg.initDataUnsafe.user.first_name;
     tg.expand();
-    let pages = document.getElementsByClassName("category-page");
-    {% for category, v in new_item_list.items() %}
-        let btn_category_{{loop.index}} = document.getElementById("btn_category_{{loop.index}}");
-        let category{{loop.index}} = document.getElementById("category_page_{{loop.index}}");
-
-        btn_category_{{loop.index}}.addEventListener("click", () => {
-        for (let i = 0; i < pages.length; i++){
-            if (i == {{loop.index-1}}) {
-                pages[i].style.display = 'block';
-            }
-            else {
-                pages[i].style.display = "none";
-            }
-        }
-    });
-    {% endfor %}
 
     //tg.MainButton.setText("В корзине пусто :(");
     let total_cost = 0;
@@ -515,60 +496,21 @@
             price_list.push({{price}});
             cost_list.push({{cost}});
         {% endfor %}
-        for (let i = 0; i < counters.length; i++){
-            console.log(counters[i].id + " = " + counters[i].value)
-        }
-        for (let i = 0; i < counters.length; i++)
+        for (let i =0; i < counters.length; i++)
         {
             if (counters[i].value == Number("0")) {
 
             } else {
-                let counter_id = counters[i].id.slice(10)
                 let item = {
-                    id: Number(counter_id),
+                    id: i,
                     price: price_list[i],
                     count: counters[i].value,
                     cost: cost_list[i]
                 }
-                console.log(`item ${i} = ${item}`);
                 items.push(item);
             }
         }
 
-        return items;
-    }
-    function get_item_dict(){
-        let counters = document.querySelectorAll('input.counter[id^="item_count"]');
-        let price_list = [];
-        let cost_list = [];
-        let items = [];
-        let user = {
-            address: document.getElementById("address").value,
-            phone: document.getElementById("phone").value,
-            name: document.getElementById("name").value,
-            city_area: city_area
-        }
-        items.push(user);
-
-        {% for id, name, price, cost, photo, des, category in item_list %}
-            price_list.push({{price}});
-            cost_list.push({{cost}});
-        {% endfor %}
-
-        counters.forEach(element => {
-            const id = element.id.slice(10);
-            const value = element.value;
-            if (value != "" && value != "0"){
-                item = {
-                    id: Number(id),
-                    price: price_list[Number(id)-1],
-                    count: value,
-                    cost: cost_list[Number(id)-1]
-                }
-                items.push(item);
-            }
-        });
-        console.log(counters);
         return items;
     }
 
@@ -576,7 +518,17 @@
     let confirm = document.getElementById("form");
     confirm.style.display = "none";
 
-
+    {% for category in category_list %}
+        let cat{{loop.index}} = document.getElementById("category{{loop.index}}");
+        let container{{loop.index}} = document.getElementById("category-item-{{loop.index}}");
+        cat{{loop.index}}.addEventListener("click", () => {
+            container{{loop.index}}.style.display = "block";
+            other_category = document.getElementsByClassName("category-item-{{loop.index}}");
+            Array.prototype.forEach.call(other_category, function (category) {
+                category.style.display = "none";
+            });
+        });
+    {% endfor %}
 
     {% for id, name, price, cost, photo, des, category in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
@@ -636,14 +588,10 @@
     });
 
     order.addEventListener("click", () => {
-        tg.sendData(JSON.stringify(get_item_dict()));
+        tg.sendData(JSON.stringify(get_item_ordered()));
         tg.close();
     });
-    let btn_check = document.getElementById("btn_check");
-    btn_check.addEventListener("click", () => {
-        let result = document.getElementById("result");
-        result.textContent = JSON.stringify(get_item_dict());
-    });
+
 
 
 

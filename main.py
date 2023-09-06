@@ -55,6 +55,9 @@ async def show_menu(request: Request):
                 items.append(item)
         category_list[category] = items
 
+    cursor.execute('SELECT * FROM alert WHERE is_active = 1')
+    alerts = cursor.fetchall()
+    print(alerts)
 
     '''print('=============')
 
@@ -65,7 +68,8 @@ async def show_menu(request: Request):
     return templates.TemplateResponse('menu.html', {'request': request,
                                                     'item_list': item_list,
                                                     'new_item_list': category_list,
-                                                    'category_list': category_unique
+                                                    'category_list': category_unique,
+                                                    'alerts': alerts
                                                     })
 
 
