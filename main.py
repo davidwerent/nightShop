@@ -57,7 +57,7 @@ async def show_menu(request: Request):
 
     cursor.execute('SELECT * FROM alert WHERE is_active = 1')
     alerts = cursor.fetchall()
-    print(alerts)
+    # print(alerts)
 
     '''print('=============')
 
