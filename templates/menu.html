@@ -328,6 +328,30 @@
         .button-category{
             min-width:100px;
         }
+                /* Окно предупреждающего сообщения */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* Кнопка закрытия */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* При наведении курсора мыши на кнопку закрыть */
+.closebtn:hover {
+  color: black;
+}
 
 
     </style>
@@ -338,6 +362,13 @@
 <link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/css/suggestions.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
 <body>
+ {% for alert in alerts %}
+        <div class="alert">
+          <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+          {{alert[1]}}<br>
+            {{alert[2]}}
+        </div>
+    {% endfor %}
 
     <div id="main">
         <div class="category-container">
