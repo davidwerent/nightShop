@@ -172,6 +172,76 @@
             max-width: 1000px;
             max-height: 400px;
         }
+        .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+        .top-settings-container{
+            display: flex;
+            justify-content: flex-start;
+            margin-left: 20px;
+        }
+        .setting-toggle{
+            margin-left: 20px;
+            font-size: 25px;
+        }
 
     </style>
 </head>
@@ -182,6 +252,19 @@
 <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
 <body>
     <div id="main">
+        <div class="top-settings-container">
+            <div class="setting-toggle">
+                <label for="item_toggle">Показать не активные товары</label>
+            </div>
+            <div class="setting-toggle">
+                <label class="switch">
+                <input id= "item_toggle" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            </div>
+
+
+        </div>
         <div class="category-container">
         {% for category in new_item_list %}
             <div class="category-item">
@@ -205,7 +288,7 @@
                 {% set display = "none" %}
             {% endif %}
             <div id="category_page_{{outloop.index}}" style="display: {{display}}" class="category-page">
-                {% for id, name, price, cost, photo, desc, category in v %}
+                {% for id, name, price, cost, photo, desc, category, isActive in v %}
                     <div class="item">
                             <div class="desc-item">
                                 <div>
@@ -225,7 +308,7 @@
                                     <button class="button-edit" onclick="myFunction{{id}}()">Редактировать</button>
                                 </div>
                                 <div class="item-delete">
-                                    <button class="button-delete">Удалить</button>
+                                    <button class="button-delete" onclick="deleteGoods{{id}}()">Удалить</button>
                                 </div>
                             </div>
                         <div id="edit-tool{{id}}" class="edit-tool">
@@ -262,6 +345,14 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+    let host_address = "";
+    if (ipAddress == "127.0.0.1") {
+        host_address = "127.0.0.1/delete"
+    }
+    else {
+        host_address = "https://davidwerent.online/delete"
+    }
+
     let city_area = "";
     var ipAddress = window.location.hostname;
     if (ipAddress == "127.0.0.1"){
@@ -269,7 +360,7 @@
         debug.style.display = "block";
     }
 
-    {% for id, name, price, cost, photo, des, category in item_list %}
+    {% for id, name, price, cost, photo, des, category, isActive in item_list %}
         function myFunction{{id}}() {
           var x = document.getElementById("edit-tool{{id}}");
           if (x.style.display === "none") {
@@ -278,9 +369,24 @@
             x.style.display = "none";
           }
         }
+        function deleteGoods{{id}}() {
+                let headers = new Headers();
+                if (confirm("Удалить товар?")){
+                    headers.append('Content-Type', 'application/json');
+                    headers.append('Accept', 'application/json');
+                    headers.append('Origin', host_address);
+                    fetch('/delete_goods', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                              "token": "gudini",
+                              "id": {{id}}
+                         })
+                    })
+                }
+            }
+
     {% endfor %}
-
-
 
     let tg = window.Telegram.WebApp;
     let order = document.getElementById("order");
@@ -307,67 +413,7 @@
 
     //tg.MainButton.setText("В корзине пусто :(");
     let total_cost = 0;
-    function check_count() {
-        let counters = document.getElementsByClassName("counter");
-        let sum_item = 0;
-        let price_list = [];
-        total_cost = 0;
-        {% for id, name, price, cost, photo, des, category in item_list %}
-            price_list.push({{price}});
-        {% endfor %}
-        Array.prototype.forEach.call(counters, function(count){
-            sum_item += Number(count.value);
-        });
-        console.log(sum_item);
-        for (let i = 0; i < counters.length; i++){
-            if (counters[i].value == Number("0")) {
 
-            }
-            else {
-                total_cost += (price_list[i] * counters[i].value);
-            }
-        }
-        console.log(total_cost);
-        sum.innerText=total_cost + " руб.";
-        return sum_item === 0;
-    }
-    function get_item_ordered() {
-        let counters = document.getElementsByClassName("counter");
-        let price_list = [];
-        let cost_list = [];
-        let items = [];
-        let user = {
-            address: document.getElementById("address").value,
-            phone: document.getElementById("phone").value,
-            name: document.getElementById("name").value
-        }
-        items.push(user);
-        {% for id, name, price, cost, photo, des, category in item_list %}
-            price_list.push({{price}});
-            cost_list.push({{cost}});
-        {% endfor %}
-        for (let i = 0; i < counters.length; i++){
-            console.log(counters[i].id + " = " + counters[i].value)
-        }
-        for (let i = 0; i < counters.length; i++)
-        {
-            if (counters[i].value == Number("0")) {
-
-            } else {
-                let counter_id = counters[i].id.slice(10)
-                let item = {
-                    id: Number(counter_id),
-                    price: price_list[i],
-                    count: counters[i].value,
-                    cost: cost_list[i]
-                }
-                console.log(`item ${i} = ${item}`);
-                items.push(item);
-            }
-        }
-
-        return items;
-    }
     function get_item_dict(){
         let counters = document.querySelectorAll('input.counter[id^="item_count"]');
         let price_list = [];
@@ -381,7 +427,7 @@
         }
         items.push(user);
 
-        {% for id, name, price, cost, photo, des, category in item_list %}
+        {% for id, name, price, cost, photo, des, category, isActive in item_list %}
             price_list.push({{price}});
             cost_list.push({{cost}});
         {% endfor %}

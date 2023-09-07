@@ -173,17 +173,17 @@
         btn_cancel{{id}}.addEventListener("click", () => {
             if (confirm('Отменить заказ #{{id}}')){
                 let headers = new Headers();
-            headers.append('Content-Type', 'application/json');
-            headers.append('Accept', 'application/json');
-            headers.append('Origin', host_address);
-            fetch('/delete', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    "token": "gudini",
-                    "id": {{id}}
-                })
-            })
+                    headers.append('Content-Type', 'application/json');
+                    headers.append('Accept', 'application/json');
+                    headers.append('Origin', host_address);
+                    fetch('/delete', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            "token": "gudini",
+                            "id": {{id}}
+                        })
+                    })
             }
 
         });

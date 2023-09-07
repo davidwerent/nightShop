@@ -32,10 +32,12 @@ async def root():
 @app.get('/menu')
 async def show_menu(request: Request):
 
-    cursor.execute('SELECT * FROM goods')
+    cursor.execute('SELECT * FROM goods WHERE isActive = ?', (1,))
     item_list = cursor.fetchall()
+
     for item in item_list:
         print(item)
+
 
 
     cursor.execute('SELECT category FROM goods')
@@ -159,6 +161,10 @@ class BaseDeleteRequest(BaseModel):
     token: str = None
     id: int = None
 
+class BaseDeleteGoods(BaseModel):
+    token: str = None
+    id: int = None
+
 @app.post('/delete')
 async def delete_order(request: BaseDeleteRequest):
     print(request)
@@ -183,13 +189,21 @@ async def edit_goods(request: Request,
     conn.commit()
     return await get_goods(request=request, token='gudini')
 
+@app.post('/delete_goods')
+async def delete_goods(request: Request, deleteData: BaseDeleteGoods):
+    print(f'need delete item with ID={deleteData.id}')
+    cursor.execute('UPDATE goods SET isActive=? WHERE id=?', (0, deleteData.id))
+    conn.commit()
+
+    return await get_goods(request=request, token='gudini')
+
 
 
 @app.get('/goods')
 async def get_goods(request: Request, token: Union[str, None] = None):
     if token != 'gudini':
         return {'access': 'denied'}
-    cursor.execute('SELECT * FROM goods')
+    cursor.execute('SELECT * FROM goods WHERE isActive=?', (1,))
     item_list = cursor.fetchall()
     # for item in item_list:
         # print(item)
