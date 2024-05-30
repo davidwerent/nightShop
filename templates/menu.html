@@ -389,7 +389,7 @@
         {% for cat in category_list %}
         {% set outloop = loop %}
         <div id="category_page_{{outloop.index}}">
-            {% for id, name, price, cost, photo, desc, category in item_list %}
+            {% for id, name, price, cost, photo, desc, category, isActove in item_list %}
                         <div class="item">
                             <div class="desc-item">
                                 <div>
@@ -462,7 +462,7 @@
         let sum_item = 0;
         let price_list = [];
         total_cost = 0;
-        {% for id, name, price, cost, photo, des, category in item_list %}
+        {% for id, name, price, cost, photo, des, category, isActive in item_list %}
             price_list.push({{price}});
         {% endfor %}
         Array.prototype.forEach.call(counters, function(count){
@@ -492,7 +492,7 @@
             name: document.getElementById("name").value
         }
         items.push(user);
-        {% for id, name, price, cost, photo, des, category in item_list %}
+        {% for id, name, price, cost, photo, des, category, isActive in item_list %}
             price_list.push({{price}});
             cost_list.push({{cost}});
         {% endfor %}
@@ -531,7 +531,7 @@
         });
     {% endfor %}
 
-    {% for id, name, price, cost, photo, des, category in item_list %}
+    {% for id, name, price, cost, photo, des, category, isActive in item_list %}
         let btn_rem{{id}} = document.getElementById("remove{{id}}");
         let btn_add{{id}} = document.getElementById("add{{id}}");
         let item_count{{id}} = document.getElementById("item_count{{id}}");
