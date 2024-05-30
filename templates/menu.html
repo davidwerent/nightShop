@@ -373,7 +373,7 @@
     <div id="main">
         <div class="category-container">
         {% for category in new_item_list %}
-            <div class="category-item-{{loop.index}}">
+            <div class="category-item">
                 <button id="btn_category_{{loop.index}}" class="button-category">
                     {% if category == "Alcohol" %}
                     Алкоголь
@@ -386,11 +386,16 @@
             </div>
         {% endfor %}
         </div>
-        {% for cat in category_list %}
-        {% set outloop = loop %}
-        <div id="category_page_{{outloop.index}}">
-            {% for id, name, price, cost, photo, desc, category, isActove in item_list %}
-                        <div class="item">
+        {% set count = namespace(value=1) %}
+        {% for category,v in new_item_list.items() %}
+            {% set outloop = loop %}
+            {% set display = "block" %}
+            {% if outloop.index > 1 %}
+                {% set display = "none" %}
+            {% endif %}
+            <div id="category_page_{{outloop.index}}" style="display: {{display}}" class="category-page">
+                {% for id, name, price, cost, photo, desc, category, isActive in v %}
+                    <div class="item">
                             <div class="desc-item">
                                 <div>
                                     <img src="{{photo}}">
@@ -413,10 +418,9 @@
                                 </div>
                             </div>
                         </div>
-
-
+                {% set count.value = count.value + 1 %}
                 {% endfor %}
-        </div>
+            </div>
         {% endfor %}
     </div>
 
@@ -519,17 +523,21 @@
     let confirm = document.getElementById("form");
     confirm.style.display = "none";
 
-    {% for category in category_list %}
-        // ОШИБКА ТУТ #TODO
-        let cat{{loop.index}} = document.getElementById("category{{loop.index}}");
-        let container{{loop.index}} = document.getElementById("category-item-{{loop.index}}");
-        cat{{loop.index}}.addEventListener("click", () => {
-            container{{loop.index}}.style.display = "block";
-            other_category = document.getElementsByClassName("category-item-{{loop.index}}");
-            Array.prototype.forEach.call(other_category, function (category) {
-                category.style.display = "none";
-            });
-        });
+let pages = document.getElementsByClassName("category-page");
+    {% for category, v in new_item_list.items() %}
+        let btn_category_{{loop.index}} = document.getElementById("btn_category_{{loop.index}}");
+        let category{{loop.index}} = document.getElementById("category_page_{{loop.index}}");
+
+        btn_category_{{loop.index}}.addEventListener("click", () => {
+        for (let i = 0; i < pages.length; i++){
+            if (i == {{loop.index-1}}) {
+                pages[i].style.display = 'block';
+            }
+            else {
+                pages[i].style.display = "none";
+            }
+        }
+    });
     {% endfor %}
 
     {% for id, name, price, cost, photo, des, category, isActive in item_list %}
