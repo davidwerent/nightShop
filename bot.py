@@ -29,7 +29,7 @@ cursor = conn.cursor()
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
+    markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://dotcomms.ru')))
 
     cursor.execute('SELECT * FROM orders WHERE user_id=:user_id and isOpen=:is_open', {'user_id': message.from_user.id,
                                                                                        'is_open': 1})
@@ -50,7 +50,7 @@ async def process_callback_button_send_cert(callback_query: types.CallbackQuery)
     cursor.execute('UPDATE user SET active_order = ? WHERE active_order = ?', (0, order_id[0]))
     conn.commit()
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://davidwerent.online/menu')))
+    markup.add(types.KeyboardButton('Сделать заказ', web_app=WebAppInfo(url='https://dotcomms.ru')))
 
     await bot.send_message(callback_query.from_user.id, 'Заказ отменен!', parse_mode=types.ParseMode.HTML, reply_markup=markup)
     await bot.answer_callback_query(callback_query.id)

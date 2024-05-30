@@ -14,12 +14,15 @@ app = FastAPI(
     title='coupon-backend',
     version='0.1'
 )
-if platform == 'darwin' or platform == 'win32':
+'''if platform == 'darwin' or platform == 'win32':
     DEBUG = True
     db_name = 'sqlite3.db'
 else:
     DEBUG = False
     db_name = 'shop_database.db'
+    '''
+DEBUG = True
+db_name = 'sqlite3.db'
 
 conn = sqlite3.connect(db_name)
 cursor = conn.cursor()
